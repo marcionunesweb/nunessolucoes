@@ -1,12 +1,1970 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Meu primeiro site no GitHub Pages</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Circuito Senac Saúde 2026 · Aracaju</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:   #0d3b6e;
+      --gold:   #e8a020;
+      --cream:  #f5f0e8;
+      --white:  #ffffff;
+      --text:   #1a1a1a;
+      --muted:  #6b7280;
+      --border: rgba(13,59,110,.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+
+    img { display: block; max-width: 100%; }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Ticker ── */
+    .ticker {
+      background: var(--blue);
+      color: var(--white);
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      overflow: hidden;
+      white-space: nowrap;
+      padding: .55rem 0;
+    }
+
+    .ticker-inner {
+      display: inline-flex;
+      animation: ticker-scroll 30s linear infinite;
+    }
+
+    .ticker-item {
+      padding: 0 2.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .9rem;
+    }
+
+    .ticker-item::after {
+      content: '•';
+      color: var(--gold);
+      font-size: .9rem;
+    }
+
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── Nav ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(245,240,232,.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      position: relative;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      z-index: 2;
+    }
+
+    .nav-logo-mark {
+      width: 48px;
+      height: 48px;
+      background: var(--blue);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1px;
+      padding: 6px;
+    }
+
+    .nav-logo-mark span {
+      font-family: 'Playfair Display', serif;
+      color: var(--white);
+      font-size: .6rem;
+      line-height: 1;
+    }
+
+    .nav-logo-mark span.gold { color: var(--gold); font-size: .7rem; font-style: italic; }
+
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--blue);
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      background: var(--gold);
+      color: var(--white);
+      font-weight: 600;
+      font-size: .875rem;
+      padding: .65rem 1.6rem;
+      border-radius: 50px;
+      transition: opacity .2s, transform .2s;
+      z-index: 2;
+    }
+
+    .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: .3rem;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 2;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--blue);
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 88vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 2rem 4rem;
+      gap: 3rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(232,160,32,.15);
+      border: 1px solid rgba(232,160,32,.35);
+      border-radius: 50px;
+      padding: .4rem 1rem;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-badge::before { content: '✦'; font-size: .55rem; }
+
+    .hero-title {
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      line-height: 1.1;
+      color: var(--blue);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title em { font-style: italic; color: var(--gold); }
+
+    .hero-desc {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: #4a4a4a;
+      max-width: 500px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      border: 2px solid var(--blue);
+      color: var(--blue);
+      font-weight: 600;
+      font-size: .9rem;
+      padding: .9rem 2.2rem;
+      border-radius: 50px;
+      transition: all .25s;
+    }
+
+    .hero-cta:hover { background: var(--blue); color: var(--white); }
+
+    .hero-meta {
+      display: flex;
+      gap: 2rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .82rem;
+      color: #555;
+    }
+
+    .hero-meta-item svg { color: var(--blue); flex-shrink: 0; }
+
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-img-wrap {
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #9ab5ce 0%, #c8a882 100%);
+      flex-shrink: 0;
+    }
+
+    .hero-img-wrap img { width:100%; height:100%; object-fit:cover; }
+
+    .hero-quote {
+      position: absolute;
+      top: 10px;
+      right: -20px;
+      background: var(--blue);
+      color: var(--white);
+      border-radius: 16px;
+      padding: 1.2rem 1.4rem;
+      max-width: 210px;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: .9rem;
+      line-height: 1.5;
+    }
+
+    .hero-quote::before {
+      content: '✦';
+      color: var(--gold);
+      display: block;
+      margin-bottom: .4rem;
+      font-size: .7rem;
+    }
+
+    .hero-stat {
+      position: absolute;
+      bottom: 8px;
+      right: -12px;
+      display: flex;
+      align-items: baseline;
+      gap: .4rem;
+    }
+
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--blue);
+      max-width: 80px;
+      line-height: 1.3;
+    }
+
+    /* ── Section helpers ── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+
+    .section-label::before { content: '—'; color: var(--gold); }
+
+    .section-title { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.15; color: var(--blue); }
+
+    .section-title em { font-style: italic; color: var(--gold); }
+
+    /* ── Manifesto ── */
+    #manifesto { background: var(--blue); padding: 6rem 2rem; }
+
+    .manifesto-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .manifesto-heading {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      line-height: 1.15;
+      color: var(--white);
+    }
+
+    .manifesto-heading em { font-style: italic; color: var(--gold); }
+
+    .manifesto-text { font-size: 1rem; line-height: 1.8; color: rgba(255,255,255,.8); }
+
+    .manifesto-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-top: 5rem;
+      border-top: 1px solid rgba(255,255,255,.15);
+    }
+
+    .stat-item {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid rgba(255,255,255,.15);
+      border-bottom: 1px solid rgba(255,255,255,.15);
+    }
+
+    .stat-item:nth-child(2n) { border-right: none; }
+    .stat-item:nth-child(n+3) { border-bottom: none; }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: .5rem;
+    }
+
+    .stat-label {
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+    }
+
+    /* ── Trilhas ── */
+    #trilhas { padding: 7rem 2rem; }
+
+    .trilhas-inner { max-width: 1200px; margin: 0 auto; }
+
+    .trilhas-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: end;
+      margin-bottom: 4rem;
+    }
+
+    .trilhas-desc { font-size: .95rem; line-height: 1.7; color: #555; }
+
+    .trilhas-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .trilha-card {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      aspect-ratio: 4/3;
+    }
+
+    .trilha-card:first-child { grid-row: span 2; aspect-ratio: auto; min-height: 440px; }
+
+    .trilha-card:hover .trilha-bg { transform: scale(1.04); }
+
+    .trilha-bg {
+      position: absolute;
+      inset: 0;
+      transition: transform .5s ease;
+    }
+
+    .trilha-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(13,59,110,.85) 0%, transparent 55%);
+    }
+
+    .trilha-num {
+      position: absolute;
+      top: 1.2rem;
+      left: 1.2rem;
+      background: rgba(255,255,255,.18);
+      backdrop-filter: blur(6px);
+      border-radius: 50px;
+      padding: .3rem .9rem;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .trilha-info {
+      position: absolute;
+      bottom: 1.4rem;
+      left: 1.4rem;
+      right: 1.4rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .trilha-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .trilha-sub { font-size: .78rem; color: rgba(255,255,255,.75); margin-top: .3rem; }
+
+    .trilha-arrow {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform .25s;
+    }
+
+    .trilha-card:hover .trilha-arrow { transform: translate(2px,-2px); }
+
+    .trilha-arrow svg { width: 16px; height: 16px; color: var(--white); }
+
+    /* Gradient placeholders */
+    .gp-1 { background: linear-gradient(150deg, #7a9eba 0%, #c8a060 100%); }
+    .gp-2 { background: linear-gradient(150deg, #4a6a9f 0%, #2a4a7f 100%); }
+    .gp-3 { background: linear-gradient(150deg, #c4864a 0%, #a86030 100%); }
+    .gp-4 { background: linear-gradient(150deg, #6a9faf 0%, #4a7f8f 100%); }
+    .gp-5 { background: linear-gradient(150deg, #8a6aaf 0%, #6a4a8f 100%); }
+
+    /* ── Programação ── */
+    #programacao { padding: 7rem 2rem; background: var(--cream); }
+
+    .programacao-inner { max-width: 1200px; margin: 0 auto; }
+
+    .programacao-header { margin-bottom: 4rem; }
+
+    .days-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+    .day-card { background: var(--white); border-radius: 24px; padding: 2.5rem; }
+
+    .day-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .day-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      color: rgba(13,59,110,.12);
+      line-height: 1;
+    }
+
+    .day-date {
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .day-theme {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--blue);
+      margin-bottom: 1.5rem;
+    }
+
+    .day-schedule { list-style: none; display: flex; flex-direction: column; gap: .9rem; }
+
+    .day-schedule li {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      font-size: .88rem;
+      line-height: 1.5;
+      color: #444;
+    }
+
+    .day-schedule li::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-top: .38rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Mestres ── */
+    #mestres { padding: 7rem 2rem; }
+
+    .mestres-inner { max-width: 1200px; margin: 0 auto; }
+
+    .mestres-desc { font-size: .95rem; line-height: 1.7; color: #555; max-width: 520px; margin-bottom: 4rem; }
+
+    .mestres-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+
+    .mestre-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mestre-img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 1.5rem;
+    }
+
+    .mestre-area {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: .6rem;
+    }
+
+    .mestre-area::before { content: '✦'; font-size: .5rem; }
+
+    .mestre-name { font-size: 1.35rem; color: var(--blue); margin-bottom: .2rem; }
+
+    .mestre-role { font-size: .82rem; color: var(--gold); margin-bottom: .9rem; }
+
+    .mestre-bio { font-size: .85rem; line-height: 1.65; color: #555; flex: 1; margin-bottom: 1.2rem; }
+
+    .mestre-sessions {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .mestre-sessions li {
+      display: flex;
+      align-items: flex-start;
+      gap: .5rem;
+      font-size: .78rem;
+      color: #555;
+    }
+
+    .mestre-sessions li svg { color: var(--gold); flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Cobertura ── */
+    #cobertura { background: var(--blue); padding: 7rem 2rem; }
+
+    .cobertura-inner { max-width: 1200px; margin: 0 auto; }
+
+    .cobertura-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+      gap: 2rem;
+    }
+
+    .cobertura-subtitle { font-size: .9rem; color: rgba(255,255,255,.6); max-width: 340px; line-height: 1.6; text-align: right; }
+
+    /* Gallery — desktop: fixed row heights */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: 220px 220px;
+      gap: 1rem;
+    }
+
+    .gallery-item {
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      /* aspect-ratio acts as fallback when grid rows don't define height */
+      aspect-ratio: 4 / 3;
+    }
+
+    /* Desktop explicit positioning */
+    .gallery-item:nth-child(1) { grid-column: span 2; }
+    .gallery-item:nth-child(4) { grid-column: 4; grid-row: 1 / 3; }
+
+    .gallery-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transition: transform .4s ease;
+    }
+
+    .gallery-item:hover .gallery-bg { transform: scale(1.06); }
+
+    .gb-1 { background: linear-gradient(135deg,#5a7a9f,#3a5a7f); }
+    .gb-2 { background: linear-gradient(135deg,#7a9f7a,#4a7f4a); }
+    .gb-3 { background: linear-gradient(135deg,#c49050,#a47030); }
+    .gb-4 { background: linear-gradient(135deg,#8a7ab0,#6a5a90); }
+    .gb-5 { background: linear-gradient(135deg,#9f7a5a,#7f5a3a); }
+    .gb-6 { background: linear-gradient(135deg,#5a9f9f,#3a7f7f); }
+    .gb-7 { background: linear-gradient(135deg,#9f5a7a,#7f3a5a); }
+
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(13,59,110,.4);
+      opacity: 0;
+      transition: opacity .3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+    .gallery-overlay svg { color: var(--white); width: 36px; height: 36px; }
+
+    /* ── Inscrição ── */
+    #inscricao { padding: 7rem 2rem; }
+
+    .inscricao-inner { max-width: 960px; margin: 0 auto; text-align: center; }
+
+    .inscricao-inner .section-label { justify-content: center; }
+
+    .inscricao-desc { font-size: 1rem; line-height: 1.7; color: #555; max-width: 600px; margin: .5rem auto 3.5rem; }
+
+    .form-card {
+      background: var(--white);
+      border-radius: 28px;
+      padding: 3rem;
+      box-shadow: 0 4px 40px rgba(13,59,110,.07);
+      text-align: left;
+    }
+
+    /* ── Step indicator ── */
+    .steps-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      margin-bottom: 3rem;
+      padding: 0 .5rem;
+    }
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .6rem;
+      min-width: 90px;
+    }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--muted);
+      background: var(--white);
+      transition: all .3s;
+      flex-shrink: 0;
+    }
+
+    .step-item.active .step-num {
+      border-color: var(--gold);
+      background: var(--gold);
+      color: var(--white);
+      box-shadow: 0 0 0 4px rgba(232,160,32,.18);
+    }
+
+    .step-item.done .step-num {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: var(--white);
+    }
+
+    .step-label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color .3s;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .step-item.active .step-label { color: var(--gold); }
+    .step-item.done .step-label { color: var(--blue); }
+
+    .steps-connector {
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+      min-width: 40px;
+      max-width: 120px;
+      margin-top: 19px;
+      transition: background .4s;
+    }
+
+    .steps-connector.done { background: var(--gold); }
+
+    /* Step panels */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; animation: fadeSlide .35s ease; }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .step-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--blue);
+      margin-bottom: 1.6rem;
+    }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: .45rem; }
+
+    .form-group.full { grid-column: span 2; }
+
+    .form-group label { font-size: .8rem; font-weight: 600; color: var(--blue); letter-spacing: .04em; }
+
+    .form-group input,
+    .form-group select {
+      padding: .85rem 1.1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      color: var(--text);
+      background: var(--cream);
+      outline: none;
+      transition: border-color .2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .form-group input:focus, .form-group select:focus { border-color: var(--blue); }
+
+    .form-group input::placeholder { color: #aaa; }
+
+    .select-wrap { position: relative; }
+
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    /* Trilha radio cards */
+    .trilha-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .trilha-option input[type="radio"] { display: none; }
+
+    .trilha-option label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      padding: 1rem .8rem;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+      font-size: .82rem;
+      font-weight: 500;
+      color: #444;
+      line-height: 1.3;
+    }
+
+    .trilha-option label .t-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin-bottom: .2rem;
+    }
+
+    .trilha-option input:checked + label {
+      border-color: var(--gold);
+      background: rgba(232,160,32,.08);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .trilha-option label:hover { border-color: var(--gold); }
+
+    /* Dia radio cards */
+    .dia-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .dia-option input[type="radio"] { display: none; }
+
+    .dia-option label {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.2rem 1.4rem;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .dia-option input:checked + label {
+      border-color: var(--gold);
+      background: rgba(232,160,32,.08);
+    }
+
+    .dia-option label:hover { border-color: var(--gold); }
+
+    .dia-num-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: rgba(13,59,110,.15);
+      line-height: 1;
+    }
+
+    .dia-option input:checked + label .dia-num-label { color: var(--gold); }
+
+    .dia-info-label { display: flex; flex-direction: column; gap: .1rem; }
+
+    .dia-info-label strong { font-size: .9rem; color: var(--blue); }
+
+    .dia-info-label span { font-size: .75rem; color: var(--muted); }
+
+    /* Resumo step 3 */
+    .resumo-grid {
+      background: var(--cream);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .resumo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: .8rem;
+      font-size: .88rem;
+    }
+
+    .resumo-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .resumo-item-label { font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .resumo-item-val { font-weight: 600; color: var(--blue); margin-top: .1rem; }
+
+    /* Step nav buttons */
+    .step-nav {
+      display: flex;
+      gap: 1rem;
+      margin-top: .4rem;
+    }
+
+    .btn-back {
+      flex: 0 0 auto;
+      padding: 1.1rem 1.8rem;
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-back:hover { border-color: var(--blue); color: var(--blue); }
+
+    .btn-next, .btn-submit {
+      flex: 1;
+      padding: 1.1rem;
+      background: var(--gold);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: opacity .2s, transform .2s;
+      letter-spacing: .03em;
+    }
+
+    .btn-next:hover, .btn-submit:hover { opacity: .88; transform: translateY(-1px); }
+
+    .form-note { font-size: .78rem; color: var(--muted); margin-top: 1rem; text-align: center; }
+
+    /* ── Footer ── */
+    footer { background: var(--blue); color: var(--white); padding: 5rem 2rem 2.5rem; }
+
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      margin-bottom: 2rem;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--white);
+      margin-bottom: .8rem;
+    }
+
+    .footer-logo span { color: var(--gold); font-style: italic; }
+
+    .footer-brand p { font-size: .85rem; line-height: 1.7; color: rgba(255,255,255,.55); max-width: 280px; }
+
+    .footer-col h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+
+    .footer-col ul li a { font-size: .85rem; color: rgba(255,255,255,.6); transition: color .2s; }
+
+    .footer-col ul li a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .78rem;
+      color: rgba(255,255,255,.35);
+    }
+
+    /* ── FABs ── */
+    .fab-group { position: fixed; bottom: 2rem; display: flex; flex-direction: column; gap: .7rem; z-index: 50; }
+
+    .fab-group.left { left: 2rem; }
+    .fab-group.right { right: 2rem; }
+
+    .fab {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,.2);
+      transition: transform .25s, opacity .3s;
+    }
+
+    .fab:hover { transform: scale(1.08); }
+
+    .fab-up { background: var(--blue); color: var(--white); opacity: 0; pointer-events: none; }
+    .fab-up.visible { opacity: 1; pointer-events: auto; }
+
+    .fab-wa { background: #25d366; color: var(--white); }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.85);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+
+    .lightbox.open { opacity: 1; pointer-events: auto; }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      color: var(--white);
+      font-size: 2rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .lightbox-content {
+      width: min(80vw, 700px);
+      height: min(70vh, 500px);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Responsive 960px ── */
+    @media (max-width: 960px) {
+      #hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-visual { display: none; }
+      .manifesto-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .manifesto-stats { margin-top: 2rem; }
+      .trilhas-header { grid-template-columns: 1fr; gap: 1rem; }
+      .days-grid { grid-template-columns: 1fr; }
+      .mestres-grid { grid-template-columns: 1fr 1fr; }
+
+      /* Gallery tablet: 2 colunas, altura via aspect-ratio */
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
+      .gallery-item {
+        aspect-ratio: 4 / 3;
+        grid-column: span 1;
+        grid-row: span 1;
+      }
+
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    }
+
+    /* ── Responsive 600px ── */
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .nav-cta { font-size: .8rem; padding: .55rem 1.2rem; }
+
+      #hero { padding-top: 2.5rem; }
+
+      .trilhas-grid { grid-template-columns: 1fr; }
+      .trilha-card:first-child { min-height: 280px; }
+
+      .mestres-grid { grid-template-columns: 1fr; }
+
+      /* Gallery mobile: coluna única, proporção 16:9 */
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-item { aspect-ratio: 16 / 9; }
+
+      .trilha-options { grid-template-columns: 1fr 1fr; }
+      .dia-options { grid-template-columns: 1fr; }
+      .form-card { padding: 1.8rem 1.4rem; }
+      .steps-connector { min-width: 16px; max-width: 40px; }
+      .step-item { min-width: 64px; }
+      .step-label { font-size: .6rem; }
+
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+
+      .footer-top { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: .5rem; text-align: center; }
+
+      .cobertura-header { flex-direction: column; align-items: flex-start; }
+      .cobertura-subtitle { text-align: left; }
+
+      .hero-meta { gap: 1rem; }
+    }
+
+    /* Nav mobile open */
+    .nav.open .nav-links {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 68px;
+      left: 0;
+      right: 0;
+      background: rgba(245,240,232,.98);
+      backdrop-filter: blur(12px);
+      padding: 1.5rem 2rem;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    }
+  </style>
 </head>
 <body>
-    <h1>Meu primeiro site no GitHub Pages</h1>
+
+  <!-- ── Ticker ── -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-inner">
+      <span class="ticker-item">Circuito Senac Saúde</span>
+      <span class="ticker-item">Vagas Limitadas</span>
+      <span class="ticker-item">Certificação Senac</span>
+      <span class="ticker-item">Cuidar de Pessoas nos Aproxima</span>
+      <span class="ticker-item">Inscrições Abertas</span>
+      <span class="ticker-item">Aracaju · 11–12 Nov 2026</span>
+      <span class="ticker-item">5 Trilhas de Saúde</span>
+      <span class="ticker-item">40+ Palestrantes</span>
+      <span class="ticker-item">Circuito Senac Saúde</span>
+      <span class="ticker-item">Vagas Limitadas</span>
+      <span class="ticker-item">Certificação Senac</span>
+      <span class="ticker-item">Cuidar de Pessoas nos Aproxima</span>
+      <span class="ticker-item">Inscrições Abertas</span>
+      <span class="ticker-item">Aracaju · 11–12 Nov 2026</span>
+      <span class="ticker-item">5 Trilhas de Saúde</span>
+      <span class="ticker-item">40+ Palestrantes</span>
+    </div>
+  </div>
+
+  <!-- ── Nav ── -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo" aria-label="Senac Saúde">
+        <div class="nav-logo-mark">
+          <span>senac</span>
+          <span class="gold">Saúde</span>
+        </div>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#manifesto">Manifesto</a></li>
+        <li><a href="#trilhas">Trilhas</a></li>
+        <li><a href="#programacao">Programação</a></li>
+        <li><a href="#mestres">Mestres</a></li>
+        <li><a href="#cobertura">Cobertura</a></li>
+      </ul>
+
+      <a href="#inscricao" class="nav-cta">Inscreva-se</a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section id="hero">
+    <div class="hero-content reveal">
+      <div class="hero-badge">Experiências que inspiram carreiras</div>
+      <h1 class="hero-title">
+        O cuidado em<br>
+        seu <em>estado</em> de arte.
+      </h1>
+      <p class="hero-desc">
+        Dois dias em Aracaju para mergulhar nas cinco trilhas da saúde com
+        mestres do ofício, simulações reais e o que há de mais avançado em
+        formação técnica. Uma realização Senac Sergipe.
+      </p>
+      <a href="#programacao" class="hero-cta">Ver programação</a>
+
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          11–12 Nov 2026
+        </div>
+        <div class="hero-meta-item">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Centro de Convenções · Aracaju
+        </div>
+        <div class="hero-meta-item">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          1.200 vagas
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual reveal">
+      <div class="hero-img-wrap">
+        <!-- Substitua pelo caminho da foto real -->
+      </div>
+      <div class="hero-quote">
+        "Cuidar é mais que uma profissão, é um ato de amor."
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">80</span>
+        <span class="hero-stat-label">Anos cuidando de pessoas</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Manifesto ── -->
+  <section id="manifesto">
+    <div class="manifesto-inner">
+      <div class="manifesto-left reveal">
+        <div class="section-label" style="color:var(--gold);">Manifesto</div>
+        <h2 class="manifesto-heading">
+          Cuidar de pessoas<br><em>nos aproxima.</em>
+        </h2>
+      </div>
+      <div class="reveal">
+        <p class="manifesto-text">
+          O Circuito Senac Saúde é mais que um evento — é uma celebração dos
+          profissionais que fazem da empatia, da técnica e da dedicação a
+          essência do cuidado que transforma vidas todos os dias. Em dois dias
+          intensos, conectamos a tradição de oitenta anos do Sistema Comércio
+          à urgência do novo: novas tecnologias, novas trilhas, novas gerações
+          de quem cuida.
+        </p>
+      </div>
+    </div>
+
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="manifesto-stats reveal">
+        <div class="stat-item">
+          <div class="stat-num">1.200</div>
+          <div class="stat-label">Vagas Presenciais</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">05</div>
+          <div class="stat-label">Trilhas de Saúde</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">40+</div>
+          <div class="stat-label">Mestres e Palestrantes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">80</div>
+          <div class="stat-label">Anos de História Senac</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Trilhas ── -->
+  <section id="trilhas">
+    <div class="trilhas-inner">
+      <div class="trilhas-header reveal">
+        <div>
+          <div class="section-label">As Trilhas</div>
+          <h2 class="section-title">Cinco caminhos. <em>Uma vocação.</em></h2>
+        </div>
+        <p class="trilhas-desc">
+          Trilhas curadas pelo Senac Sergipe para quem deseja transformar
+          vidas através do cuidado técnico e humano.
+        </p>
+      </div>
+
+      <div class="trilhas-grid">
+        <div class="trilha-card reveal">
+          <div class="trilha-bg gp-1"></div>
+          <div class="trilha-overlay"></div>
+          <div class="trilha-num">01</div>
+          <div class="trilha-info">
+            <div>
+              <div class="trilha-name">Enfermagem</div>
+              <div class="trilha-sub">Cuidado crítico &amp; práticas avançadas</div>
+            </div>
+            <div class="trilha-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="trilha-card reveal">
+          <div class="trilha-bg gp-2"></div>
+          <div class="trilha-overlay"></div>
+          <div class="trilha-num">02</div>
+          <div class="trilha-info">
+            <div>
+              <div class="trilha-name">Técnico &amp; Auxiliar<br>de Enfermagem</div>
+              <div class="trilha-sub">A essência do cuidado todos os dias</div>
+            </div>
+            <div class="trilha-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="trilha-card reveal">
+          <div class="trilha-bg gp-3"></div>
+          <div class="trilha-overlay"></div>
+          <div class="trilha-num">03</div>
+          <div class="trilha-info">
+            <div>
+              <div class="trilha-name">Massoterapia</div>
+              <div class="trilha-sub">Mãos que aliviam, transformam e conectam</div>
+            </div>
+            <div class="trilha-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="trilha-card reveal">
+          <div class="trilha-bg gp-4"></div>
+          <div class="trilha-overlay"></div>
+          <div class="trilha-num">04</div>
+          <div class="trilha-info">
+            <div>
+              <div class="trilha-name">Estética &amp; Bem-Estar</div>
+              <div class="trilha-sub">Ciência da pele e beleza funcional</div>
+            </div>
+            <div class="trilha-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="trilha-card reveal">
+          <div class="trilha-bg gp-5"></div>
+          <div class="trilha-overlay"></div>
+          <div class="trilha-num">05</div>
+          <div class="trilha-info">
+            <div>
+              <div class="trilha-name">Análises Clínicas</div>
+              <div class="trilha-sub">Diagnóstico preciso que salva vidas</div>
+            </div>
+            <div class="trilha-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Programação ── -->
+  <section id="programacao">
+    <div class="programacao-inner">
+      <div class="programacao-header reveal">
+        <div class="section-label">Programação</div>
+        <h2 class="section-title">Dois dias, <em>um ritual de cuidado.</em></h2>
+      </div>
+
+      <div class="days-grid">
+        <div class="day-card reveal">
+          <div class="day-header">
+            <div class="day-num">Dia 01</div>
+            <div class="day-date">Qua · 11 Nov</div>
+          </div>
+          <div class="day-theme">Abertura · Manifesto do Cuidado</div>
+          <ul class="day-schedule">
+            <li>08h — Credenciamento &amp; café de boas-vindas</li>
+            <li>09h30 — Conferência magna: O futuro do cuidado</li>
+            <li>11h — Painel: 80 anos formando quem cuida</li>
+            <li>14h — Workshops simultâneos das 5 trilhas</li>
+            <li>19h — Coquetel de networking</li>
+          </ul>
+        </div>
+
+        <div class="day-card reveal">
+          <div class="day-header">
+            <div class="day-num">Dia 02</div>
+            <div class="day-date">Qui · 12 Nov</div>
+          </div>
+          <div class="day-theme">Imersão · Mãos à obra</div>
+          <ul class="day-schedule">
+            <li>08h30 — Simulação realística (Enfermagem)</li>
+            <li>10h — Clínica aberta de Massoterapia</li>
+            <li>13h — Lab. de Análises Clínicas</li>
+            <li>15h — Estética Avançada: ciência da pele</li>
+            <li>17h — Cerimônia de certificação</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Mestres ── -->
+  <section id="mestres">
+    <div class="mestres-inner">
+      <div class="reveal">
+        <div class="section-label">Mestres do Ofício</div>
+        <h2 class="section-title">Vozes que <em>transformam.</em></h2>
+      </div>
+      <p class="mestres-desc reveal">
+        Profissionais e mestres de ofício de cada trilha compartilham experiências,
+        técnicas e visões para inspirar a próxima geração da saúde.
+      </p>
+
+      <div class="mestres-grid">
+
+        <div class="mestre-card reveal">
+          <div class="mestre-img gp-1" style="border-radius:50%;"></div>
+          <div class="mestre-area">Enfermagem</div>
+          <h3 class="mestre-name">Dra. Helena Martins</h3>
+          <div class="mestre-role">Coordenadora de UTI · HU-UFS</div>
+          <p class="mestre-bio">Mestre em cuidados críticos com 18 anos de experiência em terapia intensiva e formação de novas gerações de enfermeiros.</p>
+          <ul class="mestre-sessions">
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 11 Nov · 09h30 — Conferência magna</li>
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 12 Nov · 08h30 — Simulação realística</li>
+          </ul>
+        </div>
+
+        <div class="mestre-card reveal">
+          <div class="mestre-img gp-3" style="border-radius:50%;"></div>
+          <div class="mestre-area">Massoterapia</div>
+          <h3 class="mestre-name">Prof. Lucas Andrade</h3>
+          <div class="mestre-role">Terapeuta integrativo · Senac SE</div>
+          <p class="mestre-bio">Especialista em técnicas orientais e ocidentais de toque terapêutico, com foco em saúde corporativa e bem-estar.</p>
+          <ul class="mestre-sessions">
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 11 Nov · 14h — Workshop hands-on</li>
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 12 Nov · 10h — Clínica aberta</li>
+          </ul>
+        </div>
+
+        <div class="mestre-card reveal">
+          <div class="mestre-img gp-4" style="border-radius:50%;"></div>
+          <div class="mestre-area">Estética &amp; Bem-Estar</div>
+          <h3 class="mestre-name">Profa. Carla Souza</h3>
+          <div class="mestre-role">Esteticista clínica · Pesquisadora</div>
+          <p class="mestre-bio">Pioneira em protocolos de estética avançada com foco em pele sensível e diversidade dermatológica.</p>
+          <ul class="mestre-sessions">
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 11 Nov · 14h — Demonstração ao vivo</li>
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 12 Nov · 15h — Estética avançada</li>
+          </ul>
+        </div>
+
+        <div class="mestre-card reveal">
+          <div class="mestre-img gp-2" style="border-radius:50%;"></div>
+          <div class="mestre-area">Análises Clínicas</div>
+          <h3 class="mestre-name">Dr. Rafael Costa</h3>
+          <div class="mestre-role">Biomédico · Lab. Sírio-Libanês SE</div>
+          <p class="mestre-bio">Referência em diagnóstico laboratorial, com doutorado em patologia clínica e atuação em ensino e pesquisa aplicada.</p>
+          <ul class="mestre-sessions">
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 11 Nov · 11h — Painel de 80 anos</li>
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 12 Nov · 13h — Lab. Análises Clínicas</li>
+          </ul>
+        </div>
+
+        <div class="mestre-card reveal">
+          <div class="mestre-img gp-5" style="border-radius:50%;"></div>
+          <div class="mestre-area">Tec. Enfermagem</div>
+          <h3 class="mestre-name">Profa. Ana Lima</h3>
+          <div class="mestre-role">Docente Senac Sergipe · Especialista</div>
+          <p class="mestre-bio">Coordena o curso técnico de enfermagem há 12 anos, com foco em humanização e boas práticas hospitalares.</p>
+          <ul class="mestre-sessions">
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 11 Nov · 14h — Workshop trilha</li>
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 12 Nov · 08h30 — Simulação clínica</li>
+          </ul>
+        </div>
+
+        <div class="mestre-card reveal">
+          <div class="mestre-img" style="border-radius:50%;background:linear-gradient(135deg,#af9a6a,#8f7a4a);"></div>
+          <div class="mestre-area">Nutrição &amp; Saúde</div>
+          <h3 class="mestre-name">Dra. Juliana Ferreira</h3>
+          <div class="mestre-role">Nutricionista clínica · Conferencista</div>
+          <p class="mestre-bio">Autora de dois livros sobre nutrição hospitalar, com ênfase em recuperação pós-cirúrgica e qualidade de vida do paciente crítico.</p>
+          <ul class="mestre-sessions">
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 11 Nov · 09h30 — Conferência magna</li>
+            <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 12 Nov · 17h — Cerimônia de certificação</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Cobertura ── -->
+  <section id="cobertura">
+    <div class="cobertura-inner">
+      <div class="cobertura-header reveal">
+        <div>
+          <div class="section-label" style="color:var(--gold);">Cobertura</div>
+          <h2 class="section-title" style="color:var(--white);">Momentos que <em>inspiram.</em></h2>
+        </div>
+        <p class="cobertura-subtitle">
+          Imagens que capturam a energia, a conexão e o aprendizado que
+          acontece a cada edição do Circuito Senac Saúde.
+        </p>
+      </div>
+
+      <div class="gallery-grid reveal">
+        <div class="gallery-item" onclick="openLightbox('gb-1')">
+          <div class="gallery-bg gb-1"></div>
+          <div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox('gb-2')">
+          <div class="gallery-bg gb-2"></div>
+          <div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox('gb-3')">
+          <div class="gallery-bg gb-3"></div>
+          <div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox('gb-4')">
+          <div class="gallery-bg gb-4"></div>
+          <div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox('gb-5')">
+          <div class="gallery-bg gb-5"></div>
+          <div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox('gb-6')">
+          <div class="gallery-bg gb-6"></div>
+          <div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox('gb-7')">
+          <div class="gallery-bg gb-7"></div>
+          <div class="gallery-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Inscrição ── -->
+  <section id="inscricao">
+    <div class="inscricao-inner">
+      <div class="section-label reveal">Inscrições</div>
+      <h2 class="section-title reveal" style="margin-bottom:.8rem;">Garanta sua vaga. <em>O cuidado começa aqui.</em></h2>
+      <p class="inscricao-desc reveal">
+        Vagas limitadas. Certificação Senac inclusa para todos os participantes.
+        Preencha o formulário e nossa equipe entrará em contato para confirmar.
+      </p>
+
+      <div class="form-card reveal">
+
+        <!-- Steps indicator -->
+        <div class="steps-header">
+          <div class="step-item active" id="si-1">
+            <div class="step-num">1</div>
+            <div class="step-label">Seus dados</div>
+          </div>
+          <div class="steps-connector" id="sc-1"></div>
+          <div class="step-item" id="si-2">
+            <div class="step-num">2</div>
+            <div class="step-label">Trilha &amp; Dia</div>
+          </div>
+          <div class="steps-connector" id="sc-2"></div>
+          <div class="step-item" id="si-3">
+            <div class="step-num">3</div>
+            <div class="step-label">Confirmação</div>
+          </div>
+        </div>
+
+        <form id="inscricaoForm" onsubmit="handleSubmit(event)" novalidate>
+
+          <!-- Step 1: Dados pessoais -->
+          <div class="step-panel active" id="sp-1">
+            <div class="step-title">Quem vai cuidar do mundo com a gente?</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="nome">Nome completo</label>
+                <input type="text" id="nome" placeholder="Seu nome completo" />
+              </div>
+              <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" placeholder="seu@email.com" />
+              </div>
+              <div class="form-group">
+                <label for="telefone">WhatsApp</label>
+                <input type="tel" id="telefone" placeholder="(79) 9 0000-0000" />
+              </div>
+              <div class="form-group">
+                <label for="profissao">Profissão / Área</label>
+                <input type="text" id="profissao" placeholder="Ex.: Enfermeiro, estudante…" />
+              </div>
+              <div class="form-group full">
+                <label for="instituicao">Instituição / Empresa</label>
+                <input type="text" id="instituicao" placeholder="Hospital, clínica, faculdade…" />
+              </div>
+            </div>
+            <div class="step-nav">
+              <button type="button" class="btn-next" onclick="goStep(2)">Próximo passo →</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Trilha e dia -->
+          <div class="step-panel" id="sp-2">
+            <div class="step-title">Qual caminho você vai percorrer?</div>
+
+            <div class="form-group" style="margin-bottom:1.4rem;">
+              <label style="margin-bottom:.8rem;">Trilha de interesse</label>
+              <div class="trilha-options">
+                <div class="trilha-option">
+                  <input type="radio" name="trilha" id="t1" value="Enfermagem" />
+                  <label for="t1"><div class="t-icon" style="background:rgba(122,158,186,.2);">🩺</div>Enfermagem</label>
+                </div>
+                <div class="trilha-option">
+                  <input type="radio" name="trilha" id="t2" value="Técnico de Enfermagem" />
+                  <label for="t2"><div class="t-icon" style="background:rgba(74,106,159,.2);">🏥</div>Tec. &amp; Aux. Enfermagem</label>
+                </div>
+                <div class="trilha-option">
+                  <input type="radio" name="trilha" id="t3" value="Massoterapia" />
+                  <label for="t3"><div class="t-icon" style="background:rgba(196,134,74,.2);">🤲</div>Massoterapia</label>
+                </div>
+                <div class="trilha-option">
+                  <input type="radio" name="trilha" id="t4" value="Estética e Bem-Estar" />
+                  <label for="t4"><div class="t-icon" style="background:rgba(106,159,175,.2);">✨</div>Estética &amp; Bem-Estar</label>
+                </div>
+                <div class="trilha-option">
+                  <input type="radio" name="trilha" id="t5" value="Análises Clínicas" />
+                  <label for="t5"><div class="t-icon" style="background:rgba(138,106,175,.2);">🔬</div>Análises Clínicas</label>
+                </div>
+                <div class="trilha-option">
+                  <input type="radio" name="trilha" id="t6" value="Todas as trilhas" />
+                  <label for="t6"><div class="t-icon" style="background:rgba(232,160,32,.15);">⭐</div>Todas as trilhas</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:1.4rem;">
+              <label style="margin-bottom:.8rem;">Dia de participação</label>
+              <div class="dia-options">
+                <div class="dia-option">
+                  <input type="radio" name="dia" id="d1" value="Dia 01 — Qua 11 Nov" />
+                  <label for="d1">
+                    <div class="dia-num-label">01</div>
+                    <div class="dia-info-label">
+                      <strong>Quarta · 11 Nov</strong>
+                      <span>Abertura &amp; Manifesto</span>
+                    </div>
+                  </label>
+                </div>
+                <div class="dia-option">
+                  <input type="radio" name="dia" id="d2" value="Dia 02 — Qui 12 Nov" />
+                  <label for="d2">
+                    <div class="dia-num-label">02</div>
+                    <div class="dia-info-label">
+                      <strong>Quinta · 12 Nov</strong>
+                      <span>Imersão &amp; Mãos à obra</span>
+                    </div>
+                  </label>
+                </div>
+                <div class="dia-option">
+                  <input type="radio" name="dia" id="d3" value="Ambos os dias" />
+                  <label for="d3" style="grid-column:span 2; justify-content:center; gap:1.2rem;">
+                    <div class="dia-num-label" style="font-size:1.2rem; color:var(--gold);">01 + 02</div>
+                    <div class="dia-info-label">
+                      <strong>Ambos os dias</strong>
+                      <span>Experiência completa</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-nav">
+              <button type="button" class="btn-back" onclick="goStep(1)">← Voltar</button>
+              <button type="button" class="btn-next" onclick="goStep(3)">Revisar inscrição →</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Confirmação / Resumo -->
+          <div class="step-panel" id="sp-3">
+            <div class="step-title">Tudo certo? Confirme sua inscrição.</div>
+
+            <div class="resumo-grid" id="resumoGrid">
+              <!-- preenchido por JS -->
+            </div>
+
+            <div class="step-nav">
+              <button type="button" class="btn-back" onclick="goStep(2)">← Editar</button>
+              <button type="submit" class="btn-submit">Confirmar inscrição ✦</button>
+            </div>
+            <p class="form-note">Ao confirmar, você concorda com nossa política de privacidade. Sem spam.</p>
+          </div>
+
+        </form>
+
+        <!-- Sucesso -->
+        <div id="successMsg" style="display:none; text-align:center; padding:2rem 0;">
+          <div style="font-size:3rem; color:var(--gold); margin-bottom:1rem;">✦</div>
+          <h3 style="font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--blue); margin-bottom:.8rem;">Inscrição recebida!</h3>
+          <p style="color:#555; font-size:.95rem; line-height:1.7;">Nossa equipe entrará em contato em até 48 horas para confirmar sua vaga. Nos vemos em novembro!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo">Senac <span>Saúde</span></div>
+          <p>O Circuito Senac Saúde é uma realização do Senac Sergipe. Celebrando 80 anos de formação técnica de excelência no Brasil.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Evento</h4>
+          <ul>
+            <li><a href="#manifesto">Manifesto</a></li>
+            <li><a href="#trilhas">Trilhas</a></li>
+            <li><a href="#programacao">Programação</a></li>
+            <li><a href="#mestres">Mestres</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Informações</h4>
+          <ul>
+            <li><a href="#inscricao">Inscrições</a></li>
+            <li><a href="#cobertura">Galeria</a></li>
+            <li><a href="#">Política de privacidade</a></li>
+            <li><a href="#">Contato</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Local</h4>
+          <ul>
+            <li><a href="#">Centro de Convenções</a></li>
+            <li><a href="#">Aracaju · SE</a></li>
+            <li><a href="#">11–12 Nov 2026</a></li>
+            <li><a href="#">Como chegar</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Senac Sergipe · Todos os direitos reservados</span>
+        <span>Circuito Senac Saúde · Aracaju, Sergipe</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── Lightbox ── -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <div class="lightbox-content" id="lightboxContent" onclick="event.stopPropagation()"></div>
+  </div>
+
+  <!-- ── FABs ── -->
+  <div class="fab-group left">
+    <button class="fab fab-up" id="fabUp" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+  </div>
+
+  <div class="fab-group right">
+    <a href="https://wa.me/5579999999999" target="_blank" rel="noopener" class="fab fab-wa" aria-label="WhatsApp">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+  </div>
+
+  <script>
+    // Nav mobile toggle
+    const navToggle = document.getElementById('navToggle');
+    const mainNav   = document.getElementById('mainNav');
+    navToggle.addEventListener('click', () => mainNav.classList.toggle('open'));
+    document.querySelectorAll('.nav-links a').forEach(a =>
+      a.addEventListener('click', () => mainNav.classList.remove('open'))
+    );
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // FAB visibility
+    const fabUp = document.getElementById('fabUp');
+    window.addEventListener('scroll', () => {
+      fabUp.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+
+    // Active nav link
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks  = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--gold)' : '';
+      });
+    }, { passive: true });
+
+    // Lightbox
+    function openLightbox(cls) {
+      const lc = document.getElementById('lightboxContent');
+      lc.innerHTML = '<div class="' + cls + '" style="width:100%;height:100%;"></div>';
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    // ── Multi-step form ──
+    let currentStep = 1;
+
+    function goStep(n) {
+      if (n === 2 && currentStep === 1) {
+        const nome  = document.getElementById('nome').value.trim();
+        const email = document.getElementById('email').value.trim();
+        if (!nome || !email) {
+          highlight(nome  ? null : 'nome');
+          highlight(email ? null : 'email');
+          return;
+        }
+      }
+      if (n === 3 && currentStep === 2) {
+        const trilha = document.querySelector('input[name="trilha"]:checked');
+        const dia    = document.querySelector('input[name="dia"]:checked');
+        if (!trilha || !dia) {
+          if (!trilha) document.querySelector('.trilha-options').style.outline = '2px solid #e55';
+          if (!dia)    document.querySelector('.dia-options').style.outline    = '2px solid #e55';
+          return;
+        }
+        document.querySelector('.trilha-options').style.outline = '';
+        document.querySelector('.dia-options').style.outline    = '';
+        buildResumo();
+      }
+      document.getElementById('sp-' + currentStep).classList.remove('active');
+      document.getElementById('sp-' + n).classList.add('active');
+      updateStepUI(n);
+      currentStep = n;
+    }
+
+    function highlight(id) {
+      if (!id) return;
+      const el = document.getElementById(id);
+      el.style.borderColor = '#e55';
+      el.focus();
+      el.addEventListener('input', () => el.style.borderColor = '', { once: true });
+    }
+
+    function updateStepUI(active) {
+      [1,2,3].forEach(i => {
+        const si = document.getElementById('si-' + i);
+        si.classList.remove('active','done');
+        if (i < active) si.classList.add('done');
+        if (i === active) si.classList.add('active');
+        if (i >= active) si.querySelector('.step-num').textContent = i;
+      });
+      [1,2].forEach(i => {
+        const sc = document.getElementById('sc-' + i);
+        sc.classList.toggle('done', i < active);
+      });
+    }
+
+    function buildResumo() {
+      const nome      = document.getElementById('nome').value.trim() || '—';
+      const email     = document.getElementById('email').value.trim() || '—';
+      const telefone  = document.getElementById('telefone').value.trim() || '—';
+      const profissao = document.getElementById('profissao').value.trim() || '—';
+      const inst      = document.getElementById('instituicao').value.trim() || '—';
+      const trilha    = document.querySelector('input[name="trilha"]:checked')?.value || '—';
+      const dia       = document.querySelector('input[name="dia"]:checked')?.value || '—';
+
+      const items = [
+        { icon: '👤', label: 'Nome',        val: nome },
+        { icon: '✉️', label: 'E-mail',      val: email },
+        { icon: '📱', label: 'WhatsApp',    val: telefone },
+        { icon: '💼', label: 'Profissão',   val: profissao },
+        { icon: '🏛️', label: 'Instituição', val: inst },
+        { icon: '🎯', label: 'Trilha',      val: trilha },
+        { icon: '📅', label: 'Dia(s)',      val: dia },
+      ];
+
+      document.getElementById('resumoGrid').innerHTML = items.map(item => `
+        <div class="resumo-item">
+          <div class="resumo-icon"><span style="font-size:1rem;">${item.icon}</span></div>
+          <div>
+            <div class="resumo-item-label">${item.label}</div>
+            <div class="resumo-item-val">${item.val}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      document.getElementById('inscricaoForm').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+    }
+  </script>
 </body>
 </html>
