@@ -1,4 +1,4 @@
-import type { FinanceSettings } from './types';
+import type { FinanceSettings, Reserve } from './types';
 import { STEP_LABELS } from './stepsMeta';
 import { formatBRL, formatNumber } from './format';
 import { computeSnapshot, semaforoAutonomia, semaforoComprometido } from './calc';
@@ -6,6 +6,7 @@ import { TabBar, type Tab } from './components/TabBar';
 
 interface SummaryProps {
   settings: FinanceSettings;
+  reservas: Reserve[];
   onEditStep: (index: number) => void;
   onNavigate: (tab: Tab) => void;
 }
@@ -57,8 +58,8 @@ function stepPreview(settings: FinanceSettings, index: number): { text: string; 
   }
 }
 
-export function Summary({ settings, onEditStep, onNavigate }: SummaryProps) {
-  const s = computeSnapshot(settings);
+export function Summary({ settings, reservas, onEditStep, onNavigate }: SummaryProps) {
+  const s = computeSnapshot(settings, reservas);
   const rendaFixaCobreTudo = s.rendaFixaTotal >= s.custoEssencial && s.custoEssencial > 0;
   const compromissoCor = semaforoComprometido(s.rendaComprometidaPct);
   const autonomiaCor = semaforoAutonomia(s.autonomiaMeses, s.metaAutonomiaMeses);
@@ -101,12 +102,12 @@ export function Summary({ settings, onEditStep, onNavigate }: SummaryProps) {
         </div>
 
         <div className="summary-card">
-          <p className="summary-label">Autonomia atual (estimativa provisória)</p>
+          <p className="summary-label">Autonomia atual</p>
           <p className={`summary-value ${autonomiaCor}`}>{formatNumber(s.autonomiaMeses)} meses</p>
           <p className="summary-note">
-            Meta: {formatNumber(s.metaAutonomiaMeses, 0)} meses. Baseado no saldo total das contas (
-            {formatBRL(s.saldoTotalContas)}) — vai ficar mais precisa quando emergência e colchão forem
-            reservas separadas do saldo corrente.
+            Meta: {formatNumber(s.metaAutonomiaMeses, 0)} meses. Baseado no que já está guardado em
+            emergência + colchão ({formatBRL(s.reservaEmergencia + s.reservaColchao)}) — use Lançar
+            para começar a alimentar essas reservas.
           </p>
         </div>
 

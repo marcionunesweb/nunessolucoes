@@ -1,19 +1,21 @@
-import type { FinanceSettings } from './types';
+import type { FinanceSettings, Reserve } from './types';
 import { computeSnapshot, semaforoAutonomia, semaforoComprometido } from './calc';
 import { formatBRL, formatNumber } from './format';
 import { TabBar, type Tab } from './components/TabBar';
 
 interface HojeProps {
   settings: FinanceSettings;
+  reservas: Reserve[];
   onAskToBuy: () => void;
   onNavigate: (tab: Tab) => void;
 }
 
-export function Hoje({ settings, onAskToBuy, onNavigate }: HojeProps) {
-  const s = computeSnapshot(settings);
+export function Hoje({ settings, reservas, onAskToBuy, onNavigate }: HojeProps) {
+  const s = computeSnapshot(settings, reservas);
   const autonomiaCor = semaforoAutonomia(s.autonomiaMeses, s.metaAutonomiaMeses);
   const comprometidoCor = semaforoComprometido(s.rendaComprometidaPct);
   const livreRealNegativo = s.livreReal < 0;
+  const semReservas = s.reservaEmergencia + s.reservaColchao === 0;
 
   return (
     <div className="app">
@@ -27,8 +29,8 @@ export function Hoje({ settings, onAskToBuy, onNavigate }: HojeProps) {
           <p className={`hero-value ${livreRealNegativo ? 'vermelho' : ''}`}>{formatBRL(s.livreReal)}</p>
           <p className="hero-note">
             Saldo das contas, já descontadas parcelas de dívidas, parcelas do cartão e o rateio
-            mensal de custos anuais. Ainda não desconta fixos do mês nem aportes de reserva — isso
-            entra quando os lançamentos existirem.
+            mensal de custos anuais. Ainda não desconta fixos do mês, porque isso entra quando as
+            recorrências existirem.
           </p>
         </div>
 
@@ -44,6 +46,13 @@ export function Hoje({ settings, onAskToBuy, onNavigate }: HojeProps) {
             <p className="summary-note">dívidas + cartão</p>
           </div>
         </div>
+
+        {semReservas && (
+          <p className="hero-note" style={{ marginTop: -6, marginBottom: 16 }}>
+            Emergência e colchão ainda estão zeradas — use <strong>Lançar</strong> para registrar
+            receitas e começar a alimentá-las pela cascata de entrada.
+          </p>
+        )}
 
         <div className="summary-card">
           <p className="summary-label">Meta variável do mês</p>

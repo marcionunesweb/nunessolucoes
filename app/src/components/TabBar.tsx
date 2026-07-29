@@ -1,4 +1,4 @@
-export type Tab = 'hoje' | 'perguntar' | 'summary';
+export type Tab = 'hoje' | 'perguntar' | 'lancar' | 'reservas' | 'summary';
 
 interface TabBarProps {
   active: Tab;
@@ -8,6 +8,8 @@ interface TabBarProps {
 const TABS: { key: Tab; label: string }[] = [
   { key: 'hoje', label: 'Hoje' },
   { key: 'perguntar', label: 'Perguntar' },
+  { key: 'lancar', label: 'Lançar' },
+  { key: 'reservas', label: 'Reservas' },
   { key: 'summary', label: 'Fase 0' },
 ];
 

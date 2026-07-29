@@ -64,6 +64,51 @@ export interface FinanceSettings {
   cascataReservasPct: number | null; // cobre emergência + oportunidade + colchão
 }
 
+/**
+ * Ledger — reservas e lançamentos reais. Separado da Fase 0 porque isso é
+ * movimento de dinheiro, não configuração: cresce a cada uso do app.
+ */
+
+export type ReserveKind = 'emergencia' | 'oportunidade' | 'doacao' | 'colchao' | 'provisao';
+
+export const RESERVE_KINDS: ReserveKind[] = ['emergencia', 'oportunidade', 'doacao', 'colchao', 'provisao'];
+
+export const RESERVE_LABELS: Record<ReserveKind, string> = {
+  emergencia: 'Emergência',
+  oportunidade: 'Oportunidade',
+  doacao: 'Doação',
+  colchao: 'Colchão de sobras',
+  provisao: 'Provisões',
+};
+
+export interface Reserve {
+  kind: ReserveKind;
+  saldo: number;
+}
+
+export type TransactionType = 'receita' | 'despesa';
+
+export interface Transaction {
+  id: string;
+  data: string; // ISO
+  tipo: TransactionType;
+  valor: number;
+  categoria: string;
+  contaId: string;
+  // Presente só em receitas: quanto da entrada foi para cada reserva.
+  cascata?: Partial<Record<ReserveKind, number>>;
+}
+
+export interface Ledger {
+  reservas: Reserve[];
+  transacoes: Transaction[];
+}
+
+export const emptyLedger: Ledger = {
+  reservas: RESERVE_KINDS.map((kind) => ({ kind, saldo: 0 })),
+  transacoes: [],
+};
+
 export const emptySettings: FinanceSettings = {
   custoEssencial: null,
   rendaFixa1: null,

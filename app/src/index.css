@@ -397,6 +397,7 @@ input[type='range'] {
 }
 
 .ask-btn {
+  flex: none;
   width: 100%;
   margin-top: 6px;
 }
@@ -463,6 +464,89 @@ input[type='range'] {
   font-size: 13px;
   color: var(--text-dim);
   margin: 0;
+}
+
+/* ---------- Reservas ---------- */
+
+.reserve-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.reserve-form-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 0;
+}
+
+.btn-chip {
+  flex: 0 0 auto;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--track);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-chip-danger {
+  color: var(--vermelho);
+}
+
+.reserve-warning {
+  font-size: 13px;
+  color: var(--vermelho);
+  margin: 8px 0 0;
+}
+
+/* ---------- Lançar ---------- */
+
+.tipo-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.tipo-toggle-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: var(--text-dim);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tipo-toggle-btn.active {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.overview-row-sub {
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.valor-receita {
+  color: var(--verde);
+  font-weight: 700;
+}
+
+.valor-despesa {
+  color: var(--text);
 }
 
 /* ---------- Barra de navegação ---------- */
@@ -567,4 +651,8 @@ input[type='range'] {
 
 .overview-row-value.pending {
   color: var(--vermelho);
+}
+
+.overview-row--static {
+  cursor: default;
 }

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import type { FinanceSettings } from './types';
-import { computeSnapshot, tempoDeTrabalho, type Semaforo } from './calc';
+import type { FinanceSettings, Reserve } from './types';
+import { computeSnapshot, semaforoComprometido, tempoDeTrabalho, type Semaforo } from './calc';
 import { formatBRL, formatNumber } from './format';
 import { TabBar, type Tab } from './components/TabBar';
 
 interface PerguntarProps {
   settings: FinanceSettings;
+  reservas: Reserve[];
   onNavigate: (tab: Tab) => void;
 }
 
@@ -17,60 +18,66 @@ interface Veredito {
   dias: number;
 }
 
-function avaliar(settings: FinanceSettings, valor: number, parcelas: number): Veredito {
-  const s = computeSnapshot(settings);
+function avaliar(settings: FinanceSettings, reservas: Reserve[], valor: number, parcelas: number): Veredito {
+  const s = computeSnapshot(settings, reservas);
   const isAVista = parcelas <= 1;
   const parcela = valor / Math.max(parcelas, 1);
+  const valorMes = isAVista ? valor : parcela; // impacto no Livre Real deste mês
 
-  const cabeNoLivreReal = isAVista ? valor <= s.livreReal : parcela <= s.livreReal;
-
-  const novoSaldo = isAVista ? s.saldoTotalContas - valor : s.saldoTotalContas;
-  const novaAutonomia = s.custoEssencial > 0 ? novoSaldo / s.custoEssencial : 0;
-  const autonomiaCritica = novaAutonomia < s.metaAutonomiaMeses / 2;
-  const autonomiaAbaixoMeta = novaAutonomia < s.metaAutonomiaMeses;
+  const reservaDisponivel = s.reservaEmergencia + s.reservaColchao;
+  const excedente = Math.max(valorMes - s.livreReal, 0);
+  const naoCabeDeTodoJeito = excedente > reservaDisponivel;
+  const novaReserva = Math.max(reservaDisponivel - excedente, 0);
+  const novaAutonomia = s.custoEssencial > 0 ? novaReserva / s.custoEssencial : 0;
+  const metaMetade = s.metaAutonomiaMeses / 2;
+  const autonomiaCritica = excedente > 0 && novaAutonomia < metaMetade;
+  const autonomiaAbaixoMeta = excedente > 0 && novaAutonomia < s.metaAutonomiaMeses;
 
   const novoCompromisso = s.compromissoMensal + (isAVista ? 0 : parcela);
   const novoComprometidoPct = s.rendaTotalMedia > 0 ? (novoCompromisso / s.rendaTotalMedia) * 100 : 0;
+  const comprometidoEstoura = !isAVista && semaforoComprometido(novoComprometidoPct) === 'vermelho';
 
   const { horas, dias } = tempoDeTrabalho(valor, s.taxaHorariaAlvo);
 
-  // Teto por Livre Real (à vista) ou por parcela (parcelado)
-  const tetoLivreReal = Math.max(s.livreReal, 0);
-  // Teto para não deixar a renda comprometida passar de 30%
+  const reservaMinima = metaMetade * s.custoEssencial;
+  const excedenteMax = Math.max(reservaDisponivel - reservaMinima, 0);
+  const valorMesMax = Math.max(s.livreReal + excedenteMax, 0);
   const parcelaMaxima = Math.max(0.3 * s.rendaTotalMedia - s.compromissoMensal, 0);
-  const valorMaxParcelado = parcelaMaxima * Math.max(parcelas, 1);
-  // Teto para não derrubar a autonomia abaixo da metade da meta (só importa à vista)
-  const valorMaxAutonomia = Math.max(s.saldoTotalContas - (s.metaAutonomiaMeses / 2) * s.custoEssencial, 0);
 
-  if (!cabeNoLivreReal || (isAVista && autonomiaCritica) || (!isAVista && novoComprometidoPct > 30)) {
+  if (naoCabeDeTodoJeito || autonomiaCritica || comprometidoEstoura) {
+    let motivo: string;
     let saida: string;
-    if (isAVista) {
-      const teto = Math.min(tetoLivreReal, autonomiaCritica ? valorMaxAutonomia : tetoLivreReal);
-      saida = `Cabe até ${formatBRL(Math.max(teto, 0))} à vista.`;
-    } else {
+    if (comprometidoEstoura) {
+      motivo = `Sua renda comprometida sobe para ${formatNumber(novoComprometidoPct)}% — acima de 30%.`;
       saida =
-        valorMaxParcelado > 0
-          ? `Cabe até ${formatBRL(valorMaxParcelado)} parcelado em ${parcelas}x (${formatBRL(parcelaMaxima)}/mês).`
+        parcelaMaxima > 0
+          ? `Cabe até ${formatBRL(parcelaMaxima * parcelas)} parcelado em ${parcelas}x (${formatBRL(parcelaMaxima)}/mês).`
           : 'Sua renda comprometida já está no limite — quite algo antes de parcelar de novo.';
+    } else if (naoCabeDeTodoJeito) {
+      motivo = 'Nem suas reservas de emergência e colchão cobrem esse valor.';
+      saida = isAVista
+        ? `Cabe até ${formatBRL(valorMesMax)} à vista.`
+        : `Cabe até ${formatBRL(valorMesMax * parcelas)} parcelado em ${parcelas}x.`;
+    } else {
+      motivo = `Puxa ${formatBRL(excedente)} das reservas e deixa sua autonomia em ${formatNumber(novaAutonomia)} meses — abaixo da metade da meta.`;
+      saida = isAVista
+        ? `Cabe até ${formatBRL(valorMesMax)} à vista sem passar desse limite.`
+        : `Cabe até ${formatBRL(valorMesMax * parcelas)} parcelado em ${parcelas}x.`;
     }
-    const motivo = !cabeNoLivreReal
-      ? 'Não cabe no seu Livre Real hoje.'
-      : isAVista
-        ? `Derruba sua autonomia para ${formatNumber(novaAutonomia)} meses — abaixo da metade da meta.`
-        : `Sua renda comprometida sobe para ${formatNumber(novoComprometidoPct)}% — acima de 30%.`;
     return { cor: 'vermelho', motivo, saida, horas, dias };
   }
 
-  if ((isAVista && autonomiaAbaixoMeta) || (!isAVista && novoComprometidoPct >= 20)) {
-    const motivo = isAVista
-      ? `Cabe, mas sua autonomia cai para ${formatNumber(novaAutonomia)} meses — abaixo da meta de ${formatNumber(s.metaAutonomiaMeses, 0)}.`
-      : `Cabe, mas sua renda comprometida sobe para ${formatNumber(novoComprometidoPct)}% — entre 20% e 30%.`;
+  if (autonomiaAbaixoMeta || (!isAVista && novoComprometidoPct >= 20)) {
+    const motivo =
+      excedente > 0
+        ? `Cabe, mas puxa ${formatBRL(excedente)} das reservas — autonomia cai para ${formatNumber(novaAutonomia)} meses, abaixo da meta de ${formatNumber(s.metaAutonomiaMeses, 0)}.`
+        : `Cabe, mas sua renda comprometida sobe para ${formatNumber(novoComprometidoPct)}% — entre 20% e 30%.`;
     return { cor: 'amarelo', motivo, saida: null, horas, dias };
   }
 
   const motivo = isAVista
-    ? `Sobra ${formatBRL(s.livreReal - valor)} no Livre Real e a autonomia continua em ${formatNumber(novaAutonomia)} meses.`
-    : `A parcela cabe no Livre Real e a renda comprometida fica em ${formatNumber(novoComprometidoPct)}%.`;
+    ? `Sobra ${formatBRL(s.livreReal - valor)} no Livre Real sem tocar nas reservas.`
+    : `A parcela cabe no Livre Real sem tocar nas reservas, e a renda comprometida fica em ${formatNumber(novoComprometidoPct)}%.`;
   return { cor: 'verde', motivo, saida: null, horas, dias };
 }
 
@@ -80,7 +87,7 @@ const VEREDITO_TITLE: Record<Semaforo, string> = {
   vermelho: 'Não agora',
 };
 
-export function Perguntar({ settings, onNavigate }: PerguntarProps) {
+export function Perguntar({ settings, reservas, onNavigate }: PerguntarProps) {
   const [valorStr, setValorStr] = useState('');
   const [parcelasStr, setParcelasStr] = useState('1');
   const [resultado, setResultado] = useState<Veredito | null>(null);
@@ -90,7 +97,7 @@ export function Perguntar({ settings, onNavigate }: PerguntarProps) {
 
   function handleSubmit() {
     if (valor <= 0) return;
-    setResultado(avaliar(settings, valor, parcelas));
+    setResultado(avaliar(settings, reservas, valor, parcelas));
   }
 
   return (
