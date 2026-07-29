@@ -346,6 +346,161 @@ input[type='range'] {
   padding: 16px 4px;
 }
 
+/* ---------- Hoje ---------- */
+
+.hero-card {
+  padding: 4px 0 20px;
+}
+
+.hero-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin: 0 0 4px;
+}
+
+.hero-value {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-value.vermelho {
+  color: var(--vermelho);
+}
+
+.hero-note {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 10px 0 0;
+}
+
+.metric-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.metric-card .summary-value {
+  font-size: 26px;
+}
+
+.ask-btn {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.ask-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Perguntar / veredito ---------- */
+
+.veredito-card {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-left: 4px solid var(--text-dim);
+}
+
+.veredito-card.verde {
+  border-left-color: var(--verde);
+}
+
+.veredito-card.amarelo {
+  border-left-color: var(--amarelo);
+}
+
+.veredito-card.vermelho {
+  border-left-color: var(--vermelho);
+}
+
+.veredito-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.veredito-card.verde .veredito-title {
+  color: var(--verde);
+}
+
+.veredito-card.amarelo .veredito-title {
+  color: var(--amarelo);
+}
+
+.veredito-card.vermelho .veredito-title {
+  color: var(--vermelho);
+}
+
+.veredito-motivo {
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.veredito-saida {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.veredito-tempo {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+/* ---------- Barra de navegação ---------- */
+
+.step--with-tabbar {
+  padding-bottom: 84px;
+}
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+}
+
+.tab-bar-btn {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 10px 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tab-bar-btn.active {
+  color: var(--accent);
+  background: var(--track);
+}
+
 /* ---------- Resumo ---------- */
 
 .summary-card {

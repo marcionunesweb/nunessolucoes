@@ -3,13 +3,20 @@ import type { FinanceSettings } from './types';
 import { loadSettings, saveSettings } from './storage';
 import { Wizard } from './Wizard';
 import { Summary } from './Summary';
+import { Hoje } from './Hoje';
+import { Perguntar } from './Perguntar';
 import { TOTAL_STEPS } from './stepsMeta';
+import type { Tab } from './components/TabBar';
 
-type Screen = 'wizard' | 'summary';
+type Screen = 'wizard' | 'summary' | 'hoje' | 'perguntar';
+
+function jaConfigurado(settings: FinanceSettings): boolean {
+  return settings.custoEssencial != null;
+}
 
 function App() {
   const [settings, setSettings] = useState<FinanceSettings>(() => loadSettings());
-  const [screen, setScreen] = useState<Screen>('wizard');
+  const [screen, setScreen] = useState<Screen>(() => (jaConfigurado(loadSettings()) ? 'hoje' : 'wizard'));
   const [stepIndex, setStepIndex] = useState(0);
 
   useEffect(() => {
@@ -37,19 +44,31 @@ function App() {
     setScreen('wizard');
   }
 
-  if (screen === 'summary') {
-    return <Summary settings={settings} onEditStep={handleEditStep} />;
+  function handleNavigate(tab: Tab) {
+    setScreen(tab);
   }
 
-  return (
-    <Wizard
-      settings={settings}
-      onChange={handleChange}
-      index={stepIndex}
-      onBack={handleBack}
-      onNext={handleNext}
-    />
-  );
+  if (screen === 'wizard') {
+    return (
+      <Wizard
+        settings={settings}
+        onChange={handleChange}
+        index={stepIndex}
+        onBack={handleBack}
+        onNext={handleNext}
+      />
+    );
+  }
+
+  if (screen === 'summary') {
+    return <Summary settings={settings} onEditStep={handleEditStep} onNavigate={handleNavigate} />;
+  }
+
+  if (screen === 'perguntar') {
+    return <Perguntar settings={settings} onNavigate={handleNavigate} />;
+  }
+
+  return <Hoje settings={settings} onAskToBuy={() => setScreen('perguntar')} onNavigate={handleNavigate} />;
 }
 
 export default App;

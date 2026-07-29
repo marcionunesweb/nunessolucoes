@@ -1,18 +1,13 @@
 import type { FinanceSettings } from './types';
 import { STEP_LABELS } from './stepsMeta';
 import { formatBRL, formatNumber } from './format';
+import { computeSnapshot, semaforoAutonomia, semaforoComprometido } from './calc';
+import { TabBar, type Tab } from './components/TabBar';
 
 interface SummaryProps {
   settings: FinanceSettings;
   onEditStep: (index: number) => void;
-}
-
-function debtMonthlyPayment(saldo: number, taxaMensalPct: number, parcelas: number): number {
-  if (parcelas <= 0) return 0;
-  const i = taxaMensalPct / 100;
-  if (i === 0) return saldo / parcelas;
-  const pmt = (saldo * i) / (1 - Math.pow(1 + i, -parcelas));
-  return Number.isFinite(pmt) ? pmt : 0;
+  onNavigate: (tab: Tab) => void;
 }
 
 function stepPreview(settings: FinanceSettings, index: number): { text: string; pending: boolean } {
@@ -62,35 +57,11 @@ function stepPreview(settings: FinanceSettings, index: number): { text: string; 
   }
 }
 
-export function Summary({ settings, onEditStep }: SummaryProps) {
-  const custoEssencial = settings.custoEssencial ?? 0;
-  const rendaFixaTotal = (settings.rendaFixa1 ?? 0) + (settings.rendaFixa2 ?? 0);
-  const rendaTotalMedia = rendaFixaTotal + (settings.mediaVariavel ?? 0);
-
-  const metaVariavel = Math.max(custoEssencial - rendaFixaTotal, 0);
-  const rendaFixaCobreTudo = rendaFixaTotal >= custoEssencial && custoEssencial > 0;
-
-  const parcelaDividasMes = settings.dividas.reduce(
-    (sum, d) => sum + debtMonthlyPayment(d.saldo, d.taxaMensal, d.parcelasRestantes),
-    0,
-  );
-  const parcelaCartaoMes = settings.parcelamentos.reduce((sum, p) => sum + p.valorParcela, 0);
-  const compromissoMensal = parcelaDividasMes + parcelaCartaoMes;
-  const rendaComprometidaPct = rendaTotalMedia > 0 ? (compromissoMensal / rendaTotalMedia) * 100 : 0;
-
-  let compromissoCor: 'verde' | 'amarelo' | 'vermelho' = 'verde';
-  if (rendaComprometidaPct > 30) compromissoCor = 'vermelho';
-  else if (rendaComprometidaPct >= 20) compromissoCor = 'amarelo';
-
-  const saldoTotalContas = settings.contas.reduce((sum, c) => sum + c.saldo, 0);
-  const autonomiaAtual = custoEssencial > 0 ? saldoTotalContas / custoEssencial : 0;
-  const metaAutonomia = settings.metaEmergenciaMeses ?? 6;
-
-  let autonomiaCor: 'verde' | 'amarelo' | 'vermelho' = 'verde';
-  if (autonomiaAtual < metaAutonomia / 2) autonomiaCor = 'vermelho';
-  else if (autonomiaAtual < metaAutonomia) autonomiaCor = 'amarelo';
-
-  const rateioAnualMensal = settings.custosAnuais.reduce((sum, c) => sum + c.valorAnual, 0) / 12;
+export function Summary({ settings, onEditStep, onNavigate }: SummaryProps) {
+  const s = computeSnapshot(settings);
+  const rendaFixaCobreTudo = s.rendaFixaTotal >= s.custoEssencial && s.custoEssencial > 0;
+  const compromissoCor = semaforoComprometido(s.rendaComprometidaPct);
+  const autonomiaCor = semaforoAutonomia(s.autonomiaMeses, s.metaAutonomiaMeses);
 
   const somaCascata =
     (settings.cascataDoacaoPct ?? 0) + (settings.cascataProvisoesPct ?? 0) + (settings.cascataReservasPct ?? 0);
@@ -101,7 +72,7 @@ export function Summary({ settings, onEditStep }: SummaryProps) {
         <p className="app-title">Fase 0 · Resumo</p>
       </header>
 
-      <div className="step">
+      <div className="step step--with-tabbar">
         <h1 className="step-title">É isso que o app vai usar</h1>
         <p className="step-helper">
           Calculado a partir do que você preencheu. Ainda não substitui lançamentos reais — é a
@@ -110,7 +81,7 @@ export function Summary({ settings, onEditStep }: SummaryProps) {
 
         <div className="summary-card">
           <p className="summary-label">Meta variável do mês</p>
-          <p className="summary-value">{formatBRL(metaVariavel)}</p>
+          <p className="summary-value">{formatBRL(s.metaVariavel)}</p>
           <p className="summary-note">
             {rendaFixaCobreTudo
               ? 'Sua renda fixa já cobre o custo essencial sozinha.'
@@ -120,9 +91,9 @@ export function Summary({ settings, onEditStep }: SummaryProps) {
 
         <div className="summary-card">
           <p className="summary-label">Renda comprometida (dívidas + cartão)</p>
-          <p className={`summary-value ${compromissoCor}`}>{formatNumber(rendaComprometidaPct)}%</p>
+          <p className={`summary-value ${compromissoCor}`}>{formatNumber(s.rendaComprometidaPct)}%</p>
           <p className="summary-note">
-            {formatBRL(compromissoMensal)}/mês em parcelas, sobre {formatBRL(rendaTotalMedia)} de renda
+            {formatBRL(s.compromissoMensal)}/mês em parcelas, sobre {formatBRL(s.rendaTotalMedia)} de renda
             média. {compromissoCor === 'vermelho' && 'Acima de 30% — faixa crítica.'}
             {compromissoCor === 'amarelo' && 'Entre 20% e 30% — atenção.'}
             {compromissoCor === 'verde' && 'Abaixo de 20% — ok.'}
@@ -131,17 +102,17 @@ export function Summary({ settings, onEditStep }: SummaryProps) {
 
         <div className="summary-card">
           <p className="summary-label">Autonomia atual (estimativa provisória)</p>
-          <p className={`summary-value ${autonomiaCor}`}>{formatNumber(autonomiaAtual)} meses</p>
+          <p className={`summary-value ${autonomiaCor}`}>{formatNumber(s.autonomiaMeses)} meses</p>
           <p className="summary-note">
-            Meta: {metaAutonomia} meses. Baseado no saldo total das contas ({formatBRL(saldoTotalContas)}
-            ) — vai ficar mais precisa quando emergência e colchão forem reservas separadas do saldo
-            corrente.
+            Meta: {formatNumber(s.metaAutonomiaMeses, 0)} meses. Baseado no saldo total das contas (
+            {formatBRL(s.saldoTotalContas)}) — vai ficar mais precisa quando emergência e colchão forem
+            reservas separadas do saldo corrente.
           </p>
         </div>
 
         <div className="summary-card">
           <p className="summary-label">Rateio mensal de custos anuais</p>
-          <p className="summary-value">{formatBRL(rateioAnualMensal)}</p>
+          <p className="summary-value">{formatBRL(s.rateioAnualMensal)}</p>
           <p className="summary-note">Já deve ser descontado do Livre Real todo mês.</p>
         </div>
 
@@ -174,6 +145,8 @@ export function Summary({ settings, onEditStep }: SummaryProps) {
           })}
         </div>
       </div>
+
+      <TabBar active="summary" onNavigate={onNavigate} />
     </div>
   );
 }
