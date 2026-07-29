@@ -23,6 +23,7 @@ function App() {
   const [ledger, setLedger] = useState<Ledger>(() => loadLedger());
   const [screen, setScreen] = useState<Screen>(() => (jaConfigurado(loadSettings()) ? 'hoje' : 'wizard'));
   const [stepIndex, setStepIndex] = useState(0);
+  const [editReturnTo, setEditReturnTo] = useState<Tab | null>(null);
 
   useEffect(() => {
     saveSettings(settings);
@@ -37,6 +38,11 @@ function App() {
   }
 
   function handleNext() {
+    if (editReturnTo) {
+      setScreen(editReturnTo);
+      setEditReturnTo(null);
+      return;
+    }
     if (stepIndex < TOTAL_STEPS - 1) {
       setStepIndex((i) => i + 1);
     } else {
@@ -48,8 +54,9 @@ function App() {
     setStepIndex((i) => Math.max(0, i - 1));
   }
 
-  function handleEditStep(index: number) {
+  function handleEditStep(index: number, from: Tab) {
     setStepIndex(index);
+    setEditReturnTo(from);
     setScreen('wizard');
   }
 
@@ -112,6 +119,7 @@ function App() {
         index={stepIndex}
         onBack={handleBack}
         onNext={handleNext}
+        editMode={editReturnTo != null}
       />
     );
   }
@@ -121,7 +129,7 @@ function App() {
       <Summary
         settings={settings}
         reservas={ledger.reservas}
-        onEditStep={handleEditStep}
+        onEditStep={(i) => handleEditStep(i, 'summary')}
         onNavigate={handleNavigate}
       />
     );
@@ -155,7 +163,9 @@ function App() {
   }
 
   if (screen === 'dividas') {
-    return <Dividas settings={settings} onEditStep={handleEditStep} onNavigate={handleNavigate} />;
+    return (
+      <Dividas settings={settings} onEditStep={(i) => handleEditStep(i, 'dividas')} onNavigate={handleNavigate} />
+    );
   }
 
   return (

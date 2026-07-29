@@ -12,15 +12,16 @@ interface WizardProps {
   index: number;
   onBack: () => void;
   onNext: () => void;
+  editMode?: boolean;
 }
 
-export function Wizard({ settings, onChange, index, onBack, onNext }: WizardProps) {
+export function Wizard({ settings, onChange, index, onBack, onNext, editMode }: WizardProps) {
   const shellProps = {
     index,
     total: TOTAL_STEPS,
     onBack: index > 0 ? onBack : undefined,
     onNext,
-    nextLabel: index === TOTAL_STEPS - 1 ? 'Ver resumo' : 'Continuar',
+    nextLabel: editMode ? 'Salvar' : index === TOTAL_STEPS - 1 ? 'Ver resumo' : 'Continuar',
   };
 
   switch (index) {
