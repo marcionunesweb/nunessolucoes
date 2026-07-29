@@ -8,6 +8,7 @@ import { Hoje } from './Hoje';
 import { Perguntar } from './Perguntar';
 import { Lancar } from './Lancar';
 import { Reservas } from './Reservas';
+import { Dividas } from './Dividas';
 import { TOTAL_STEPS } from './stepsMeta';
 import type { Tab } from './components/TabBar';
 
@@ -151,6 +152,10 @@ function App() {
         onNavigate={handleNavigate}
       />
     );
+  }
+
+  if (screen === 'dividas') {
+    return <Dividas settings={settings} onEditStep={handleEditStep} onNavigate={handleNavigate} />;
   }
 
   return (

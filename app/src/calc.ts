@@ -1,4 +1,4 @@
-import type { FinanceSettings, Reserve, ReserveKind } from './types';
+import type { Debt, FinanceSettings, Reserve, ReserveKind } from './types';
 
 export type Semaforo = 'verde' | 'amarelo' | 'vermelho';
 
@@ -157,4 +157,87 @@ export function aplicarCascataAoLedger(reservas: Reserve[], resultado: CascataRe
   next = withReserveDelta(next, 'oportunidade', resultado.oportunidade);
   next = withReserveDelta(next, 'colchao', resultado.colchao);
   return next;
+}
+
+/**
+ * Quitação de dívidas (PLANO.md §12). Simula mês a mês: todas as dívidas
+ * recebem ao menos a parcela mínima, e o aporte extra — somado ao mínimo
+ * das dívidas já quitadas — vai inteiro para a próxima da fila de
+ * prioridade. Avalanche prioriza maior taxa; bola de neve, menor saldo.
+ * Limite de 600 meses (50 anos) evita loop infinito em cenário inviável.
+ */
+export type EstrategiaQuitacao = 'avalanche' | 'bolaDeNeve';
+
+export interface QuitacaoResultado {
+  ordem: string[];
+  mesesParaQuitar: number;
+  jurosTotalPago: number;
+  quitacaoPorDivida: Record<string, number>; // id -> mês em que zera
+  inviavel: boolean; // parcela mínima não cobre nem os juros de alguma dívida
+}
+
+const LIMITE_MESES = 600;
+
+export function ordemEstrategia(dividas: Debt[], estrategia: EstrategiaQuitacao): string[] {
+  const copia = [...dividas];
+  if (estrategia === 'avalanche') {
+    copia.sort((a, b) => b.taxaMensal - a.taxaMensal);
+  } else {
+    copia.sort((a, b) => a.saldo - b.saldo);
+  }
+  return copia.map((d) => d.id);
+}
+
+export function simularQuitacao(dividas: Debt[], aporteExtra: number, estrategia: EstrategiaQuitacao): QuitacaoResultado {
+  const ordem = ordemEstrategia(dividas, estrategia);
+  const estado = dividas.map((d) => ({
+    id: d.id,
+    saldo: d.saldo,
+    taxa: d.taxaMensal / 100,
+    minimo: debtMonthlyPayment(d.saldo, d.taxaMensal, d.parcelasRestantes),
+  }));
+
+  const inviavel = estado.some((d) => d.saldo > 0 && d.minimo <= d.saldo * d.taxa);
+  const quitacaoPorDivida: Record<string, number> = {};
+  let jurosTotalPago = 0;
+  let mes = 0;
+
+  if (estado.length === 0) {
+    return { ordem, mesesParaQuitar: 0, jurosTotalPago: 0, quitacaoPorDivida, inviavel: false };
+  }
+
+  while (estado.some((d) => d.saldo > 0.01) && mes < LIMITE_MESES && !inviavel) {
+    mes++;
+    for (const d of estado) {
+      if (d.saldo <= 0) continue;
+      const juros = d.saldo * d.taxa;
+      jurosTotalPago += juros;
+      d.saldo += juros;
+      const pagamento = Math.min(d.minimo, d.saldo);
+      d.saldo -= pagamento;
+    }
+
+    const minimoLiberado = estado.filter((d) => d.saldo <= 0).reduce((sum, d) => sum + d.minimo, 0);
+    let extraDisponivel = aporteExtra + minimoLiberado;
+    for (const id of ordem) {
+      if (extraDisponivel <= 0) break;
+      const d = estado.find((x) => x.id === id);
+      if (!d || d.saldo <= 0) continue;
+      const pagamento = Math.min(extraDisponivel, d.saldo);
+      d.saldo -= pagamento;
+      extraDisponivel -= pagamento;
+    }
+
+    for (const d of estado) {
+      if (d.saldo <= 0.01 && !(d.id in quitacaoPorDivida)) quitacaoPorDivida[d.id] = mes;
+    }
+  }
+
+  return { ordem, mesesParaQuitar: mes, jurosTotalPago, quitacaoPorDivida, inviavel };
+}
+
+export function dataFutura(mesesAFrente: number): Date {
+  const d = new Date();
+  d.setMonth(d.getMonth() + Math.round(mesesAFrente));
+  return d;
 }
