@@ -11,6 +11,7 @@ interface StepShellProps {
   nextLabel?: string;
   nextDisabled?: boolean;
   onSkip?: () => void;
+  onSaveAndReturn?: () => void;
 }
 
 export function StepShell({
@@ -24,6 +25,7 @@ export function StepShell({
   nextLabel = 'Continuar',
   nextDisabled,
   onSkip,
+  onSaveAndReturn,
 }: StepShellProps) {
   const pct = Math.round(((index + 1) / total) * 100);
   return (
@@ -63,6 +65,11 @@ export function StepShell({
         {onSkip && (
           <button className="btn btn-skip" onClick={onSkip} type="button">
             Não sei ainda / pular
+          </button>
+        )}
+        {onSaveAndReturn && (
+          <button className="btn btn-skip" onClick={onSaveAndReturn} type="button">
+            Salvar e voltar
           </button>
         )}
       </div>

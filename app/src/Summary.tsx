@@ -82,6 +82,10 @@ export function Summary({ settings, reservas, onEditStep, onNavigate }: SummaryP
           fotografia inicial.
         </p>
 
+        <button type="button" className="btn-chip" style={{ marginBottom: 16 }} onClick={() => onEditStep(0)}>
+          Editar Fase 0 inteira
+        </button>
+
         <div className="summary-card">
           <p className="summary-label">Meta variável do mês</p>
           <p className="summary-value">{formatBRL(s.metaVariavel)}</p>

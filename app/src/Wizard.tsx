@@ -13,15 +13,17 @@ interface WizardProps {
   onBack: () => void;
   onNext: () => void;
   editMode?: boolean;
+  onSaveAndReturn?: () => void;
 }
 
-export function Wizard({ settings, onChange, index, onBack, onNext, editMode }: WizardProps) {
+export function Wizard({ settings, onChange, index, onBack, onNext, editMode, onSaveAndReturn }: WizardProps) {
   const shellProps = {
     index,
     total: TOTAL_STEPS,
     onBack: index > 0 ? onBack : undefined,
     onNext,
-    nextLabel: editMode ? 'Salvar' : index === TOTAL_STEPS - 1 ? 'Ver resumo' : 'Continuar',
+    nextLabel: index === TOTAL_STEPS - 1 ? (editMode ? 'Salvar' : 'Ver resumo') : 'Continuar',
+    onSaveAndReturn: editMode ? onSaveAndReturn : undefined,
   };
 
   switch (index) {

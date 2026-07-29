@@ -38,15 +38,11 @@ function App() {
   }
 
   function handleNext() {
-    if (editReturnTo) {
-      setScreen(editReturnTo);
-      setEditReturnTo(null);
-      return;
-    }
     if (stepIndex < TOTAL_STEPS - 1) {
       setStepIndex((i) => i + 1);
     } else {
-      setScreen('summary');
+      setScreen(editReturnTo ?? 'summary');
+      setEditReturnTo(null);
     }
   }
 
@@ -58,6 +54,12 @@ function App() {
     setStepIndex(index);
     setEditReturnTo(from);
     setScreen('wizard');
+  }
+
+  function handleSaveAndReturn() {
+    if (!editReturnTo) return;
+    setScreen(editReturnTo);
+    setEditReturnTo(null);
   }
 
   function handleNavigate(tab: Tab) {
@@ -120,6 +122,7 @@ function App() {
         onBack={handleBack}
         onNext={handleNext}
         editMode={editReturnTo != null}
+        onSaveAndReturn={handleSaveAndReturn}
       />
     );
   }
