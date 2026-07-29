@@ -31,6 +31,13 @@ export interface AnnualCost {
   valorAnual: number;
 }
 
+export interface Recurring {
+  id: string;
+  nome: string;
+  valor: number;
+  diaVencimento: number; // dia do mês, 1-31
+}
+
 export interface FinanceSettings {
   // 1-8: números únicos
   custoEssencial: number | null;
@@ -62,6 +69,10 @@ export interface FinanceSettings {
   cascataDoacaoPct: number | null;
   cascataProvisoesPct: number | null;
   cascataReservasPct: number | null; // cobre emergência + oportunidade + colchão
+
+  // 17: fixos mensais com data de vencimento — o que falta pro Livre Real
+  // saber o que ainda vai vencer neste mês, e não só o compromisso médio.
+  recorrentes: Recurring[];
 }
 
 /**
@@ -129,4 +140,5 @@ export const emptySettings: FinanceSettings = {
   cascataDoacaoPct: 10,
   cascataProvisoesPct: 5,
   cascataReservasPct: 15,
+  recorrentes: [],
 };

@@ -29,6 +29,7 @@ export interface Snapshot {
   rendaComprometidaPct: number;
   saldoTotalContas: number;
   rateioAnualMensal: number;
+  fixosAVencer: number;
   livreReal: number;
   reservaEmergencia: number;
   reservaColchao: number;
@@ -41,9 +42,15 @@ export interface Snapshot {
 }
 
 /**
- * Fase 0 ainda não tem fixos do mês com data de vencimento, então Livre Real
- * desconta parcelas de dívidas, parcelas do cartão e o rateio de custos
- * anuais, mas não fixos avulsos — isso entra quando recorrências existirem.
+ * Fixos com dia de vencimento ainda não passado neste mês — depois do dia,
+ * o app assume que já foi pago (via Lançar) e não desconta de novo.
+ */
+export function fixosAVencerNoMes(recorrentes: FinanceSettings['recorrentes'], hoje: Date = new Date()): number {
+  const diaAtual = hoje.getDate();
+  return recorrentes.filter((r) => r.diaVencimento >= diaAtual).reduce((sum, r) => sum + r.valor, 0);
+}
+
+/**
  * Autonomia usa emergência + colchão de verdade (não mais o saldo em conta),
  * porque é para isso que essas duas reservas existem.
  */
@@ -63,8 +70,9 @@ export function computeSnapshot(settings: FinanceSettings, reservas: Reserve[]):
 
   const saldoTotalContas = settings.contas.reduce((sum, c) => sum + c.saldo, 0);
   const rateioAnualMensal = settings.custosAnuais.reduce((sum, c) => sum + c.valorAnual, 0) / 12;
+  const fixosAVencer = fixosAVencerNoMes(settings.recorrentes);
 
-  const livreReal = saldoTotalContas - parcelaDividasMes - parcelaCartaoMes - rateioAnualMensal;
+  const livreReal = saldoTotalContas - fixosAVencer - parcelaDividasMes - parcelaCartaoMes - rateioAnualMensal;
 
   const reservaEmergencia = reserveSaldo(reservas, 'emergencia');
   const reservaColchao = reserveSaldo(reservas, 'colchao');
@@ -86,6 +94,7 @@ export function computeSnapshot(settings: FinanceSettings, reservas: Reserve[]):
     rendaComprometidaPct,
     saldoTotalContas,
     rateioAnualMensal,
+    fixosAVencer,
     livreReal,
     reservaEmergencia,
     reservaColchao,

@@ -53,6 +53,8 @@ function stepPreview(settings: FinanceSettings, index: number): { text: string; 
       };
     case 15:
       return { text: `${settings.custosAnuais.length} custo(s)`, pending: false };
+    case 16:
+      return { text: `${settings.recorrentes.length} fixo(s)`, pending: false };
     default:
       return { text: '', pending: false };
   }

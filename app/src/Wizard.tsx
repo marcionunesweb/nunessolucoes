@@ -1,4 +1,4 @@
-import type { FinanceSettings, Debt, Installment, Account, AnnualCost } from './types';
+import type { FinanceSettings, Debt, Installment, Account, AnnualCost, Recurring } from './types';
 import { newId } from './storage';
 import { StepShell } from './components/StepShell';
 import { RepeatableList } from './components/RepeatableList';
@@ -434,6 +434,43 @@ export function Wizard({ settings, onChange, index, onBack, onNext }: WizardProp
                   label="Valor anual (R$)"
                   value={item.valorAnual || null}
                   onChange={(v) => update({ valorAnual: v ?? 0 })}
+                />
+              </div>
+            )}
+          />
+        </StepShell>
+      );
+
+    case 16:
+      return (
+        <StepShell
+          {...shellProps}
+          title="Fixos mensais com vencimento"
+          helper="Contas com dia certo para vencer: aluguel, internet, academia, assinaturas. É o que falta pro Livre Real saber o que ainda vai sair da conta neste mês — depois do dia de vencimento, o app assume que já foi pago."
+        >
+          <RepeatableList<Recurring>
+            items={settings.recorrentes}
+            onChange={(recorrentes) => onChange({ recorrentes })}
+            makeNew={() => ({ id: newId(), nome: '', valor: 0, diaVencimento: 1 })}
+            emptyHint="Nenhum fixo cadastrado."
+            addLabel="+ Adicionar fixo"
+            renderItem={(item, update) => (
+              <div className="list-item-row">
+                <TextField
+                  label="Conta"
+                  value={item.nome}
+                  onChange={(v) => update({ nome: v })}
+                  placeholder="Aluguel, internet…"
+                />
+                <InlineNumber
+                  label="Valor (R$)"
+                  value={item.valor || null}
+                  onChange={(v) => update({ valor: v ?? 0 })}
+                />
+                <InlineNumber
+                  label="Dia do vencimento"
+                  value={item.diaVencimento || null}
+                  onChange={(v) => update({ diaVencimento: Math.min(31, Math.max(1, v ?? 1)) })}
                 />
               </div>
             )}

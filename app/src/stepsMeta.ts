@@ -15,6 +15,7 @@ export const STEP_LABELS: string[] = [
   'Metas de oportunidade e doação',
   'Cascata de entrada',
   'Custos anuais',
+  'Fixos mensais com vencimento',
 ];
 
 export const TOTAL_STEPS = STEP_LABELS.length;

@@ -28,9 +28,9 @@ export function Hoje({ settings, reservas, onAskToBuy, onNavigate }: HojeProps) 
           <p className="hero-label">Livre Real</p>
           <p className={`hero-value ${livreRealNegativo ? 'vermelho' : ''}`}>{formatBRL(s.livreReal)}</p>
           <p className="hero-note">
-            Saldo das contas, já descontadas parcelas de dívidas, parcelas do cartão e o rateio
-            mensal de custos anuais. Ainda não desconta fixos do mês, porque isso entra quando as
-            recorrências existirem.
+            Saldo das contas, já descontados os fixos que ainda vão vencer este mês
+            {s.fixosAVencer > 0 ? ` (${formatBRL(s.fixosAVencer)})` : ''}, parcelas de dívidas, parcelas
+            do cartão e o rateio mensal de custos anuais.
           </p>
         </div>
 
