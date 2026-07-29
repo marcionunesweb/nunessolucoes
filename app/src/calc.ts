@@ -1,4 +1,4 @@
-import type { Debt, FinanceSettings, Reserve, ReserveKind } from './types';
+import type { Debt, FinanceSettings, Reserve, ReserveKind, Transaction } from './types';
 
 export type Semaforo = 'verde' | 'amarelo' | 'vermelho';
 
@@ -8,6 +8,16 @@ export function debtMonthlyPayment(saldo: number, taxaMensalPct: number, parcela
   if (i === 0) return saldo / parcelas;
   const pmt = (saldo * i) / (1 - Math.pow(1 + i, -parcelas));
   return Number.isFinite(pmt) ? pmt : 0;
+}
+
+/**
+ * Delta que um lançamento já registrado aplicou na conta em que caiu:
+ * negativo para despesa, o líquido (após a cascata) para receita.
+ */
+export function efeitoNaConta(t: Transaction): number {
+  if (t.tipo === 'despesa') return -t.valor;
+  const totalCascata = Object.values(t.cascata ?? {}).reduce((sum, v) => sum + (v ?? 0), 0);
+  return t.valor - totalCascata;
 }
 
 export function reserveSaldo(reservas: Reserve[], kind: ReserveKind): number {

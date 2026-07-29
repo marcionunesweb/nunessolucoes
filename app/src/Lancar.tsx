@@ -10,6 +10,7 @@ interface LancarProps {
   reservas: Reserve[];
   transacoes: Transaction[];
   onLancar: (input: { tipo: TransactionType; valor: number; categoria: string; contaId: string }) => void;
+  onEditarConta: (transacaoId: string, novaContaId: string) => void;
   onNavigate: (tab: Tab) => void;
 }
 
@@ -17,12 +18,28 @@ function formatData(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 }
 
-export function Lancar({ settings, reservas, transacoes, onLancar, onNavigate }: LancarProps) {
+export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta, onNavigate }: LancarProps) {
   const [tipo, setTipo] = useState<TransactionType>('despesa');
   const [valorStr, setValorStr] = useState('');
   const [categoria, setCategoria] = useState('');
   const [contaId, setContaId] = useState(settings.contas[0]?.id ?? '');
   const [ultimaCascata, setUltimaCascata] = useState<ReturnType<typeof aplicarCascata> | null>(null);
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [editandoContaId, setEditandoContaId] = useState('');
+
+  function contaNome(id: string): string {
+    return settings.contas.find((c) => c.id === id)?.nome ?? '—';
+  }
+
+  function iniciarEdicao(t: Transaction) {
+    setEditandoId(t.id);
+    setEditandoContaId(t.contaId);
+  }
+
+  function salvarEdicao(transacaoId: string) {
+    onEditarConta(transacaoId, editandoContaId);
+    setEditandoId(null);
+  }
 
   const valor = parseFloat(valorStr.replace(',', '.')) || 0;
   const podeEnviar = valor > 0 && categoria.trim().length > 0 && contaId !== '';
@@ -152,22 +169,53 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onNavigate }:
             </p>
             <div className="overview-list">
               {transacoes.slice(0, 8).map((t) => (
-                <div className="overview-row overview-row--static" key={t.id}>
-                  <span className="overview-row-title">
-                    {formatData(t.data)} · {t.categoria}
-                    {t.tipo === 'receita' && t.cascata && (
-                      <span className="overview-row-sub">
-                        {' '}
-                        → {Object.entries(t.cascata)
-                          .filter(([, v]) => (v ?? 0) > 0)
-                          .map(([k, v]) => `${RESERVE_LABELS[k as keyof typeof RESERVE_LABELS]} ${formatBRL(v ?? 0)}`)
-                          .join(' · ')}
-                      </span>
-                    )}
-                  </span>
-                  <span className={`overview-row-value ${t.tipo === 'receita' ? 'valor-receita' : 'valor-despesa'}`}>
-                    {t.tipo === 'receita' ? '+' : '−'} {formatBRL(t.valor)}
-                  </span>
+                <div className="transacao-item" key={t.id}>
+                  <div className="overview-row overview-row--static overview-row--nested">
+                    <span className="overview-row-title">
+                      {formatData(t.data)} · {t.categoria}
+                      {t.tipo === 'receita' && t.cascata && (
+                        <span className="overview-row-sub">
+                          {' '}
+                          → {Object.entries(t.cascata)
+                            .filter(([, v]) => (v ?? 0) > 0)
+                            .map(([k, v]) => `${RESERVE_LABELS[k as keyof typeof RESERVE_LABELS]} ${formatBRL(v ?? 0)}`)
+                            .join(' · ')}
+                        </span>
+                      )}
+                    </span>
+                    <span className={`overview-row-value ${t.tipo === 'receita' ? 'valor-receita' : 'valor-despesa'}`}>
+                      {t.tipo === 'receita' ? '+' : '−'} {formatBRL(t.valor)}
+                    </span>
+                  </div>
+
+                  {editandoId === t.id ? (
+                    <div className="transacao-conta-row">
+                      <select
+                        className="plain-input"
+                        value={editandoContaId}
+                        onChange={(e) => setEditandoContaId(e.target.value)}
+                      >
+                        {settings.contas.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.nome}
+                          </option>
+                        ))}
+                      </select>
+                      <button type="button" className="btn-chip" onClick={() => salvarEdicao(t.id)}>
+                        Salvar
+                      </button>
+                      <button type="button" className="link-btn" onClick={() => setEditandoId(null)}>
+                        Cancelar
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="transacao-conta-row">
+                      <span className="transacao-conta-label">Conta: {contaNome(t.contaId)}</span>
+                      <button type="button" className="link-btn" onClick={() => iniciarEdicao(t)}>
+                        Editar conta
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

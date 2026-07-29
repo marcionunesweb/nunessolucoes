@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FinanceSettings, Ledger, TransactionType } from './types';
 import { loadSettings, saveSettings, loadLedger, saveLedger, newId } from './storage';
-import { aplicarCascata, aplicarCascataAoLedger } from './calc';
+import { aplicarCascata, aplicarCascataAoLedger, efeitoNaConta } from './calc';
 import { Wizard } from './Wizard';
 import { Summary } from './Summary';
 import { Hoje } from './Hoje';
@@ -113,6 +113,24 @@ function App() {
     }));
   }
 
+  function handleEditarContaTransacao(transacaoId: string, novaContaId: string) {
+    const t = ledger.transacoes.find((x) => x.id === transacaoId);
+    if (!t || t.contaId === novaContaId) return;
+    const efeito = efeitoNaConta(t);
+    setSettings((prev) => ({
+      ...prev,
+      contas: prev.contas.map((c) => {
+        if (c.id === t.contaId) return { ...c, saldo: c.saldo - efeito };
+        if (c.id === novaContaId) return { ...c, saldo: c.saldo + efeito };
+        return c;
+      }),
+    }));
+    setLedger((prev) => ({
+      ...prev,
+      transacoes: prev.transacoes.map((x) => (x.id === transacaoId ? { ...x, contaId: novaContaId } : x)),
+    }));
+  }
+
   if (screen === 'wizard') {
     return (
       <Wizard
@@ -149,6 +167,7 @@ function App() {
         reservas={ledger.reservas}
         transacoes={ledger.transacoes}
         onLancar={handleLancar}
+        onEditarConta={handleEditarContaTransacao}
         onNavigate={handleNavigate}
       />
     );
