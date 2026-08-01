@@ -3,11 +3,11 @@ import { emptySettings, RESERVE_KINDS, type FinanceSettings, type Ledger } from 
 const KEY = 'pfa:settings:v1';
 const LEDGER_KEY = 'pfa:ledger:v1';
 
-function normalizeSettings(parsed: Partial<FinanceSettings> | null | undefined): FinanceSettings {
+export function normalizeSettings(parsed: Partial<FinanceSettings> | null | undefined): FinanceSettings {
   return { ...emptySettings, ...(parsed ?? {}) };
 }
 
-function normalizeLedger(parsed: Partial<Ledger> | null | undefined): Ledger {
+export function normalizeLedger(parsed: Partial<Ledger> | null | undefined): Ledger {
   const reservas = RESERVE_KINDS.map(
     (kind) => parsed?.reservas?.find((r) => r.kind === kind) ?? { kind, saldo: 0 },
   );

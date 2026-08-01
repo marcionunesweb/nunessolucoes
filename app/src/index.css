@@ -563,6 +563,24 @@ input[type='range'] {
   color: var(--text);
 }
 
+/* ---------- Aviso de falha ao salvar (modo servidor) ---------- */
+
+.save-error-banner {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  z-index: 20;
+  background: var(--vermelho);
+  color: #fff;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+}
+
 /* ---------- Barra de navegação ---------- */
 
 .step--with-tabbar {
