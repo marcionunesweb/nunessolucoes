@@ -3,12 +3,16 @@ import { STEP_LABELS } from './stepsMeta';
 import { formatBRL, formatNumber } from './format';
 import { computeSnapshot, semaforoAutonomia, semaforoComprometido } from './calc';
 import { TabBar, type Tab } from './components/TabBar';
+import { ImportExport } from './components/ImportExport';
+import type { ImportResult } from './storage';
 
 interface SummaryProps {
   settings: FinanceSettings;
   reservas: Reserve[];
   onEditStep: (index: number) => void;
   onNavigate: (tab: Tab) => void;
+  onExport: () => void;
+  onImport: (payload: ImportResult) => void;
 }
 
 function stepPreview(settings: FinanceSettings, index: number): { text: string; pending: boolean } {
@@ -60,7 +64,7 @@ function stepPreview(settings: FinanceSettings, index: number): { text: string; 
   }
 }
 
-export function Summary({ settings, reservas, onEditStep, onNavigate }: SummaryProps) {
+export function Summary({ settings, reservas, onEditStep, onNavigate, onExport, onImport }: SummaryProps) {
   const s = computeSnapshot(settings, reservas);
   const rendaFixaCobreTudo = s.rendaFixaTotal >= s.custoEssencial && s.custoEssencial > 0;
   const compromissoCor = semaforoComprometido(s.rendaComprometidaPct);
@@ -151,6 +155,8 @@ export function Summary({ settings, reservas, onEditStep, onNavigate }: SummaryP
             );
           })}
         </div>
+
+        <ImportExport onExport={onExport} onImport={onImport} />
       </div>
 
       <TabBar active="summary" onNavigate={onNavigate} />

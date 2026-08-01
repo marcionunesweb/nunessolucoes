@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
-import type { FinanceSettings, Ledger, TransactionType } from './types';
-import { loadSettings, saveSettings, loadLedger, saveLedger, newId } from './storage';
+import type { FinanceSettings, Ledger, Recurring, TransactionType } from './types';
+import {
+  loadSettings,
+  saveSettings,
+  loadLedger,
+  saveLedger,
+  newId,
+  buildExportPayload,
+  type ImportResult,
+} from './storage';
 import { aplicarCascata, aplicarCascataAoLedger, efeitoNaConta } from './calc';
 import { Wizard } from './Wizard';
 import { Summary } from './Summary';
@@ -16,6 +24,17 @@ type Screen = 'wizard' | Tab;
 
 function jaConfigurado(settings: FinanceSettings): boolean {
   return settings.custoEssencial != null;
+}
+
+// Lançar a mesma despesa fixa em meses diferentes atualiza o fixo existente
+// em vez de duplicá-lo — senão o Livre Real descontaria o mesmo aluguel 2x.
+function upsertRecorrente(recorrentes: Recurring[], nome: string, valor: number, diaVencimento: number): Recurring[] {
+  const nomeNorm = nome.trim().toLowerCase();
+  const idx = recorrentes.findIndex((r) => r.nome.trim().toLowerCase() === nomeNorm);
+  if (idx === -1) return [...recorrentes, { id: newId(), nome, valor, diaVencimento }];
+  const next = [...recorrentes];
+  next[idx] = { ...next[idx], valor, diaVencimento };
+  return next;
 }
 
 function App() {
@@ -66,7 +85,14 @@ function App() {
     setScreen(tab);
   }
 
-  function handleLancar(input: { tipo: TransactionType; valor: number; categoria: string; contaId: string }) {
+  function handleLancar(input: {
+    tipo: TransactionType;
+    valor: number;
+    categoria: string;
+    contaId: string;
+    fixo: boolean;
+    diaVencimento?: number;
+  }) {
     const id = newId();
     const data = new Date().toISOString();
 
@@ -74,11 +100,23 @@ function App() {
       setSettings((prev) => ({
         ...prev,
         contas: prev.contas.map((c) => (c.id === input.contaId ? { ...c, saldo: c.saldo - input.valor } : c)),
+        recorrentes:
+          input.fixo && input.diaVencimento
+            ? upsertRecorrente(prev.recorrentes, input.categoria, input.valor, input.diaVencimento)
+            : prev.recorrentes,
       }));
       setLedger((prev) => ({
         ...prev,
         transacoes: [
-          { id, data, tipo: 'despesa', valor: input.valor, categoria: input.categoria, contaId: input.contaId },
+          {
+            id,
+            data,
+            tipo: 'despesa',
+            valor: input.valor,
+            categoria: input.categoria,
+            contaId: input.contaId,
+            fixo: input.fixo,
+          },
           ...prev.transacoes,
         ],
       }));
@@ -100,6 +138,7 @@ function App() {
           valor: input.valor,
           categoria: input.categoria,
           contaId: input.contaId,
+          fixo: input.fixo,
           cascata: {
             doacao: resultado.doacao,
             provisao: resultado.provisao,
@@ -131,6 +170,25 @@ function App() {
     }));
   }
 
+  function handleExport() {
+    const payload = buildExportPayload(settings, ledger);
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `assistente-financeiro-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function handleImport(payload: ImportResult) {
+    setSettings(payload.settings);
+    setLedger(payload.ledger);
+    setScreen(jaConfigurado(payload.settings) ? 'hoje' : 'wizard');
+  }
+
   if (screen === 'wizard') {
     return (
       <Wizard
@@ -152,6 +210,8 @@ function App() {
         reservas={ledger.reservas}
         onEditStep={(i) => handleEditStep(i, 'summary')}
         onNavigate={handleNavigate}
+        onExport={handleExport}
+        onImport={handleImport}
       />
     );
   }

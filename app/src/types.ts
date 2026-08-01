@@ -108,6 +108,9 @@ export interface Transaction {
   contaId: string;
   // Presente só em receitas: quanto da entrada foi para cada reserva.
   cascata?: Partial<Record<ReserveKind, number>>;
+  // Marcado quando o lançamento representa algo que se repete todo mês.
+  // Em despesas isso também gera/atualiza um fixo em recorrentes.
+  fixo?: boolean;
 }
 
 export interface Ledger {

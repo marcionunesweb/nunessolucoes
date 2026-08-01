@@ -540,6 +540,20 @@ input[type='range'] {
   font-weight: 400;
 }
 
+.tag-fixo {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--track);
+  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  vertical-align: middle;
+}
+
 .valor-receita {
   color: var(--verde);
   font-weight: 700;

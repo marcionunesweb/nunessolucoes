@@ -9,7 +9,14 @@ interface LancarProps {
   settings: FinanceSettings;
   reservas: Reserve[];
   transacoes: Transaction[];
-  onLancar: (input: { tipo: TransactionType; valor: number; categoria: string; contaId: string }) => void;
+  onLancar: (input: {
+    tipo: TransactionType;
+    valor: number;
+    categoria: string;
+    contaId: string;
+    fixo: boolean;
+    diaVencimento?: number;
+  }) => void;
   onEditarConta: (transacaoId: string, novaContaId: string) => void;
   onNavigate: (tab: Tab) => void;
 }
@@ -23,6 +30,8 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
   const [valorStr, setValorStr] = useState('');
   const [categoria, setCategoria] = useState('');
   const [contaId, setContaId] = useState(settings.contas[0]?.id ?? '');
+  const [fixo, setFixo] = useState(false);
+  const [diaVencimentoStr, setDiaVencimentoStr] = useState(String(new Date().getDate()));
   const [ultimaCascata, setUltimaCascata] = useState<ReturnType<typeof aplicarCascata> | null>(null);
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [editandoContaId, setEditandoContaId] = useState('');
@@ -51,9 +60,11 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
     } else {
       setUltimaCascata(null);
     }
-    onLancar({ tipo, valor, categoria: categoria.trim(), contaId });
+    const diaVencimento = fixo && tipo === 'despesa' ? Math.min(31, Math.max(1, parseInt(diaVencimentoStr, 10) || 1)) : undefined;
+    onLancar({ tipo, valor, categoria: categoria.trim(), contaId, fixo, diaVencimento });
     setValorStr('');
     setCategoria('');
+    setFixo(false);
   }
 
   if (settings.contas.length === 0) {
@@ -95,6 +106,48 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
             Receita
           </button>
         </div>
+
+        <div className="tipo-toggle">
+          <button
+            type="button"
+            className={`tipo-toggle-btn ${!fixo ? 'active' : ''}`}
+            onClick={() => setFixo(false)}
+          >
+            Avulso
+          </button>
+          <button type="button" className={`tipo-toggle-btn ${fixo ? 'active' : ''}`} onClick={() => setFixo(true)}>
+            Fixo
+          </button>
+        </div>
+
+        {fixo && tipo === 'despesa' && (
+          <div className="field">
+            <label className="field-label" htmlFor="dia-vencimento-lancamento">
+              Dia do vencimento (todo mês)
+            </label>
+            <input
+              id="dia-vencimento-lancamento"
+              className="plain-input numeric"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={31}
+              value={diaVencimentoStr}
+              onChange={(e) => setDiaVencimentoStr(e.target.value)}
+            />
+            <p className="step-helper" style={{ marginTop: 8, marginBottom: 0, fontSize: 13 }}>
+              Vai para os fixos da Fase 0 — o Livre Real passa a descontar isso todo mês, mesmo antes
+              de você lançar de novo.
+            </p>
+          </div>
+        )}
+
+        {fixo && tipo === 'receita' && (
+          <p className="step-helper" style={{ marginTop: -8, marginBottom: 20, fontSize: 13 }}>
+            Fica marcado como fixo no histórico, mas ainda não altera a renda fixa da Fase 0
+            automaticamente — ajuste lá se for uma nova fonte permanente.
+          </p>
+        )}
 
         <div className="field">
           <label className="field-label" htmlFor="valor-lancamento">
@@ -173,6 +226,7 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
                   <div className="overview-row overview-row--static overview-row--nested">
                     <span className="overview-row-title">
                       {formatData(t.data)} · {t.categoria}
+                      {t.fixo && <span className="tag-fixo"> fixo</span>}
                       {t.tipo === 'receita' && t.cascata && (
                         <span className="overview-row-sub">
                           {' '}
