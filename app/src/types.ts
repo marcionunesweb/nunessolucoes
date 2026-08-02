@@ -111,6 +111,8 @@ export interface Transaction {
   // Marcado quando o lançamento representa algo que se repete todo mês.
   // Em despesas isso também gera/atualiza um fixo em recorrentes.
   fixo?: boolean;
+  // Dia do mês em que esse fixo costuma vencer/cair, só quando fixo=true.
+  diaVencimento?: number;
 }
 
 export interface Ledger {

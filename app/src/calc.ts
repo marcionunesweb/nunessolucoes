@@ -24,6 +24,19 @@ export function reserveSaldo(reservas: Reserve[], kind: ReserveKind): number {
   return reservas.find((r) => r.kind === kind)?.saldo ?? 0;
 }
 
+/**
+ * Desfaz o efeito de uma receita nas reservas — usado ao excluir um
+ * lançamento que já tinha passado pela cascata de entrada.
+ */
+export function reverterCascataDoLedger(reservas: Reserve[], t: Transaction): Reserve[] {
+  if (t.tipo !== 'receita' || !t.cascata) return reservas;
+  let next = reservas;
+  for (const [kind, valor] of Object.entries(t.cascata)) {
+    next = withReserveDelta(next, kind as ReserveKind, -(valor ?? 0));
+  }
+  return next;
+}
+
 export function withReserveDelta(reservas: Reserve[], kind: ReserveKind, delta: number): Reserve[] {
   return reservas.map((r) => (r.kind === kind ? { ...r, saldo: r.saldo + delta } : r));
 }

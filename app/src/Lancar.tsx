@@ -18,6 +18,7 @@ interface LancarProps {
     diaVencimento?: number;
   }) => void;
   onEditarConta: (transacaoId: string, novaContaId: string) => void;
+  onExcluir: (transacaoId: string) => void;
   onNavigate: (tab: Tab) => void;
 }
 
@@ -25,7 +26,7 @@ function formatData(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 }
 
-export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta, onNavigate }: LancarProps) {
+export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta, onExcluir, onNavigate }: LancarProps) {
   const [tipo, setTipo] = useState<TransactionType>('despesa');
   const [valorStr, setValorStr] = useState('');
   const [categoria, setCategoria] = useState('');
@@ -33,8 +34,10 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
   const [fixo, setFixo] = useState(false);
   const [diaVencimentoStr, setDiaVencimentoStr] = useState(String(new Date().getDate()));
   const [ultimaCascata, setUltimaCascata] = useState<ReturnType<typeof aplicarCascata> | null>(null);
+  const [ultimoDiaVencimento, setUltimoDiaVencimento] = useState<number | null>(null);
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [editandoContaId, setEditandoContaId] = useState('');
+  const [excluindoId, setExcluindoId] = useState<string | null>(null);
 
   function contaNome(id: string): string {
     return settings.contas.find((c) => c.id === id)?.nome ?? '—';
@@ -43,11 +46,22 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
   function iniciarEdicao(t: Transaction) {
     setEditandoId(t.id);
     setEditandoContaId(t.contaId);
+    setExcluindoId(null);
   }
 
   function salvarEdicao(transacaoId: string) {
     onEditarConta(transacaoId, editandoContaId);
     setEditandoId(null);
+  }
+
+  function confirmarExclusao(transacaoId: string) {
+    if (excluindoId !== transacaoId) {
+      setExcluindoId(transacaoId);
+      setEditandoId(null);
+      return;
+    }
+    onExcluir(transacaoId);
+    setExcluindoId(null);
   }
 
   const valor = parseFloat(valorStr.replace(',', '.')) || 0;
@@ -60,8 +74,9 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
     } else {
       setUltimaCascata(null);
     }
-    const diaVencimento = fixo && tipo === 'despesa' ? Math.min(31, Math.max(1, parseInt(diaVencimentoStr, 10) || 1)) : undefined;
+    const diaVencimento = fixo ? Math.min(31, Math.max(1, parseInt(diaVencimentoStr, 10) || 1)) : undefined;
     onLancar({ tipo, valor, categoria: categoria.trim(), contaId, fixo, diaVencimento });
+    setUltimoDiaVencimento(tipo === 'receita' && fixo ? (diaVencimento ?? null) : null);
     setValorStr('');
     setCategoria('');
     setFixo(false);
@@ -120,10 +135,10 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
           </button>
         </div>
 
-        {fixo && tipo === 'despesa' && (
+        {fixo && (
           <div className="field">
             <label className="field-label" htmlFor="dia-vencimento-lancamento">
-              Dia do vencimento (todo mês)
+              {tipo === 'despesa' ? 'Dia do vencimento (todo mês)' : 'Dia esperado de recebimento (todo mês)'}
             </label>
             <input
               id="dia-vencimento-lancamento"
@@ -136,17 +151,11 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
               onChange={(e) => setDiaVencimentoStr(e.target.value)}
             />
             <p className="step-helper" style={{ marginTop: 8, marginBottom: 0, fontSize: 13 }}>
-              Vai para os fixos da Fase 0 — o Livre Real passa a descontar isso todo mês, mesmo antes
-              de você lançar de novo.
+              {tipo === 'despesa'
+                ? 'Vai para os fixos da Fase 0 — o Livre Real passa a descontar isso todo mês, mesmo antes de você lançar de novo.'
+                : 'Só um lembrete, salvo nesse lançamento — ainda não altera a renda fixa da Fase 0 nem soma no Livre Real antes de cair de verdade.'}
             </p>
           </div>
-        )}
-
-        {fixo && tipo === 'receita' && (
-          <p className="step-helper" style={{ marginTop: -8, marginBottom: 20, fontSize: 13 }}>
-            Fica marcado como fixo no histórico, mas ainda não altera a renda fixa da Fase 0
-            automaticamente — ajuste lá se for uma nova fonte permanente.
-          </p>
         )}
 
         <div className="field">
@@ -208,6 +217,7 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
             <p className="veredito-title">Cascata aplicada</p>
             <p className="veredito-motivo">
               {formatBRL(ultimaCascata.liquido)} foram para a conta em {formatData(new Date().toISOString())}.
+              {ultimoDiaVencimento != null && ` Recebimento fixo, esperado todo dia ${ultimoDiaVencimento}.`}
             </p>
             <p className="veredito-saida">
               Doação {formatBRL(ultimaCascata.doacao)} · Provisão {formatBRL(ultimaCascata.provisao)} ·
@@ -229,6 +239,12 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
                     <span className="overview-row-title">
                       {formatData(t.data)} · {t.categoria}
                       {t.fixo && <span className="tag-fixo"> fixo</span>}
+                      {t.fixo && t.diaVencimento != null && (
+                        <span className="overview-row-sub">
+                          {' '}
+                          · {t.tipo === 'despesa' ? 'vence' : 'recebe'} todo dia {t.diaVencimento}
+                        </span>
+                      )}
                       {t.tipo === 'receita' && t.cascata && (
                         <span className="overview-row-sub">
                           {' '}
@@ -264,11 +280,32 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
                         Cancelar
                       </button>
                     </div>
+                  ) : excluindoId === t.id ? (
+                    <div className="transacao-conta-row">
+                      <span className="transacao-conta-label">Excluir este lançamento?</span>
+                      <button
+                        type="button"
+                        className="link-btn link-btn-danger"
+                        onClick={() => confirmarExclusao(t.id)}
+                      >
+                        Confirmar
+                      </button>
+                      <button type="button" className="link-btn" onClick={() => setExcluindoId(null)}>
+                        Cancelar
+                      </button>
+                    </div>
                   ) : (
                     <div className="transacao-conta-row">
                       <span className="transacao-conta-label">Conta: {contaNome(t.contaId)}</span>
                       <button type="button" className="link-btn" onClick={() => iniciarEdicao(t)}>
                         Editar conta
+                      </button>
+                      <button
+                        type="button"
+                        className="link-btn link-btn-danger"
+                        onClick={() => confirmarExclusao(t.id)}
+                      >
+                        Excluir
                       </button>
                     </div>
                   )}

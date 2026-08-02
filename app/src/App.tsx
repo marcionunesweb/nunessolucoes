@@ -10,7 +10,7 @@ import {
   buildExportPayload,
   type ImportResult,
 } from './storage';
-import { aplicarCascata, aplicarCascataAoLedger, efeitoNaConta } from './calc';
+import { aplicarCascata, aplicarCascataAoLedger, efeitoNaConta, reverterCascataDoLedger } from './calc';
 import { SERVER_MODE, me, getSetupStatus, getData, putData, logout } from './api';
 import { Wizard } from './Wizard';
 import { Summary } from './Summary';
@@ -171,6 +171,7 @@ function App() {
             categoria: input.categoria,
             contaId: input.contaId,
             fixo: input.fixo,
+            diaVencimento: input.diaVencimento,
           },
           ...prev.transacoes,
         ],
@@ -194,6 +195,7 @@ function App() {
           categoria: input.categoria,
           contaId: input.contaId,
           fixo: input.fixo,
+          diaVencimento: input.diaVencimento,
           cascata: {
             doacao: resultado.doacao,
             provisao: resultado.provisao,
@@ -222,6 +224,20 @@ function App() {
     setLedger((prev) => ({
       ...prev,
       transacoes: prev.transacoes.map((x) => (x.id === transacaoId ? { ...x, contaId: novaContaId } : x)),
+    }));
+  }
+
+  function handleExcluirTransacao(transacaoId: string) {
+    const t = ledger.transacoes.find((x) => x.id === transacaoId);
+    if (!t) return;
+    const efeito = efeitoNaConta(t);
+    setSettings((prev) => ({
+      ...prev,
+      contas: prev.contas.map((c) => (c.id === t.contaId ? { ...c, saldo: c.saldo - efeito } : c)),
+    }));
+    setLedger((prev) => ({
+      reservas: reverterCascataDoLedger(prev.reservas, t),
+      transacoes: prev.transacoes.filter((x) => x.id !== transacaoId),
     }));
   }
 
@@ -294,6 +310,7 @@ function App() {
         transacoes={ledger.transacoes}
         onLancar={handleLancar}
         onEditarConta={handleEditarContaTransacao}
+        onExcluir={handleExcluirTransacao}
         onNavigate={handleNavigate}
       />
     );
