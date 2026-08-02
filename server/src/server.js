@@ -12,6 +12,11 @@ import { signToken, setAuthCookie, clearAuthCookie, requireAuth } from './auth.j
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 4000;
+// 0.0.0.0 por padrão pra não quebrar o docker-compose (o Caddy alcança o
+// container pela rede interna, não por localhost). Atrás de um painel como
+// CyberPanel/OpenLiteSpeed no mesmo host, defina HOST=127.0.0.1 no .env —
+// só o proxy local precisa enxergar essa porta, não a internet.
+const HOST = process.env.HOST || '0.0.0.0';
 const STATIC_DIR = process.env.STATIC_DIR || path.join(__dirname, '../../app/dist');
 
 const app = express();
@@ -103,6 +108,6 @@ if (fs.existsSync(STATIC_DIR)) {
   console.warn(`Aviso: ${STATIC_DIR} não existe ainda — rode "npm run build" em app/ antes de servir o front-end.`);
 }
 
-app.listen(PORT, () => {
-  console.log(`Assistente Financeiro (server) ouvindo em http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Assistente Financeiro (server) ouvindo em http://${HOST}:${PORT}`);
 });
