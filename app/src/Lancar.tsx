@@ -206,7 +206,9 @@ export function Lancar({ settings, reservas, transacoes, onLancar, onEditarConta
         {ultimaCascata && (
           <div className="veredito-card verde">
             <p className="veredito-title">Cascata aplicada</p>
-            <p className="veredito-motivo">{formatBRL(ultimaCascata.liquido)} foram para a conta.</p>
+            <p className="veredito-motivo">
+              {formatBRL(ultimaCascata.liquido)} foram para a conta em {formatData(new Date().toISOString())}.
+            </p>
             <p className="veredito-saida">
               Doação {formatBRL(ultimaCascata.doacao)} · Provisão {formatBRL(ultimaCascata.provisao)} ·
               Emergência {formatBRL(ultimaCascata.emergencia)} · Oportunidade{' '}
