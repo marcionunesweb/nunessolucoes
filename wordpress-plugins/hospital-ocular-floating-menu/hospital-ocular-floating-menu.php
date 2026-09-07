@@ -294,7 +294,7 @@ function hofm_render_frontend_menu() {
             pointer-events: auto; /* Reativa cliques dentro do menu */
             background-color: <?php echo esc_attr($bg_color); ?>;
             padding: 8px 10px 8px 18px;
-            border-radius: 40px;
+            border-radius: 22px;
             display: flex;
             align-items: center;
             gap: 0;
@@ -334,76 +334,98 @@ function hofm_render_frontend_menu() {
         }
 
         /* 2. Links Centrais */
-        .hofm-link {
+        .hofm-floating-menu a.hofm-link {
             background: transparent;
-            color: <?php echo esc_attr($link_color); ?>;
-            padding: 10px 4px;
+            color: <?php echo esc_attr($link_color); ?> !important;
+            padding: 12px 6px;
+            min-height: 20px;
+            display: inline-flex;
+            align-items: center;
             border-radius: 10px;
             font-size: 16px;
             font-weight: 700;
-            text-decoration: none;
+            text-decoration: none !important;
             transition: all 0.25s ease;
             white-space: nowrap;
         }
-        .hofm-link:hover {
+        .hofm-floating-menu a.hofm-link:hover,
+        .hofm-floating-menu a.hofm-link:focus-visible {
             background-color: rgba(20, 90, 140, 0.08);
-            color: <?php echo esc_attr($link_color); ?>;
-            text-decoration: none;
+            color: <?php echo esc_attr($link_color); ?> !important;
+            text-decoration: none !important;
         }
 
         /* 3. Call to Action (CTA) */
-        .hofm-cta {
+        .hofm-floating-menu a.hofm-cta {
             background: linear-gradient(135deg, <?php echo esc_attr($cta_bg_color); ?>, <?php echo esc_attr($cta_bg_color_2); ?>);
-            color: <?php echo esc_attr($cta_text_color); ?>;
+            color: <?php echo esc_attr($cta_text_color); ?> !important;
             padding: 16px 28px;
-            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            border-radius: 14px;
             font-size: 15px;
             font-weight: 700;
-            text-decoration: none;
+            text-decoration: none !important;
             transition: all 0.3s ease;
             white-space: nowrap;
             margin-left: 18px;
             flex-shrink: 0;
             box-shadow: 0 8px 20px -6px rgba(21, 74, 144, 0.5);
         }
-        .hofm-cta:hover {
+        .hofm-floating-menu a.hofm-cta:hover,
+        .hofm-floating-menu a.hofm-cta:focus-visible {
+            color: <?php echo esc_attr($cta_text_color); ?> !important;
             transform: scale(1.02);
             box-shadow: 0 10px 25px -6px rgba(21, 74, 144, 0.6);
-            text-decoration: none;
+            text-decoration: none !important;
             filter: brightness(1.05);
         }
 
         /* Responsividade para Celulares */
         @media (max-width: 768px) {
             .hofm-floating-wrapper {
-                bottom: 15px;
+                bottom: 12px;
+                padding: 0 12px; /* Evita colar nas bordas da tela */
+                box-sizing: border-box;
             }
             .hofm-floating-menu {
                 justify-content: flex-start;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch; /* Rolagem suave em iOS */
                 scrollbar-width: none; /* Firefox */
+                scroll-snap-type: x proximity;
                 padding: 6px 8px 6px 12px;
-                border-radius: 30px;
+                border-radius: 18px;
+                width: 100%;
+                /* Esmaece as pontas para indicar que há mais itens ao rolar */
+                -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
+                mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
             }
             .hofm-floating-menu::-webkit-scrollbar {
                 display: none; /* Esconde a barra de rolagem visual no Chrome/Safari */
             }
+            .hofm-logo,
+            .hofm-floating-menu a.hofm-link,
+            .hofm-floating-menu a.hofm-cta {
+                scroll-snap-align: start;
+            }
             .hofm-logo {
-                height: 40px;
+                height: 38px;
                 padding-right: 12px;
             }
             .hofm-divider {
                 margin: 0 12px;
-                height: 26px;
+                height: 24px;
             }
-            .hofm-cta {
-                padding: 12px 18px;
+            .hofm-floating-menu a.hofm-cta {
+                padding: 13px 18px;
                 font-size: 14px;
                 margin-left: 12px;
+                border-radius: 12px;
             }
-            .hofm-link {
+            .hofm-floating-menu a.hofm-link {
                 font-size: 14px;
+                padding: 13px 6px;
             }
         }
     </style>
