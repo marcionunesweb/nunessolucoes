@@ -255,11 +255,12 @@ function hofm_render_frontend_menu() {
     // Se não houver nada configurado, não mostra nada.
     if (!$logo_img && !$cta_text) return;
 
-    // Monta a lista de itens (logo + links) que ficam à esquerda do CTA
-    $items = [];
+    // Logo (sem divisor ao lado) e links centrais (com divisor só entre eles)
+    $logo_html = '';
     if ($logo_img) {
-        $items[] = '<a href="' . esc_url($logo_url) . '" class="hofm-logo"><img src="' . esc_url($logo_img) . '" alt="Logo"></a>';
+        $logo_html = '<a href="' . esc_url($logo_url) . '" class="hofm-logo"><img src="' . esc_url($logo_img) . '" alt="Logo"></a>';
     }
+    $items = [];
     for ($i = 1; $i <= 5; $i++) {
         $l_text = hofm_opt('hofm_link_'.$i.'_text');
         $l_url  = get_option('hofm_link_'.$i.'_url');
@@ -433,10 +434,10 @@ function hofm_render_frontend_menu() {
     <div class="hofm-floating-wrapper">
         <div class="hofm-floating-menu">
 
+            <?php echo $logo_html; ?>
             <?php echo implode('<span class="hofm-divider"></span>', $items); ?>
 
             <?php if ($cta_text): ?>
-                <?php if (!empty($items)): ?><span class="hofm-divider"></span><?php endif; ?>
                 <a href="<?php echo esc_url($cta_url); ?>" class="hofm-cta"><?php echo esc_html($cta_text); ?></a>
             <?php endif; ?>
 
