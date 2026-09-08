@@ -24,6 +24,7 @@ function hofm_default_value($key) {
         'hofm_cta_bg_color'     => '#18b6c9',
         'hofm_cta_bg_color_2'   => '#154a90',
         'hofm_cta_text_color'   => '#ffffff',
+        'hofm_link_1_hide_mobile' => '1',
     ];
     return isset($defaults[$key]) ? $defaults[$key] : '';
 }
@@ -50,11 +51,11 @@ add_action('admin_init', 'hofm_register_settings');
 function hofm_register_settings() {
     $fields = [
         'hofm_logo_img', 'hofm_logo_url',
-        'hofm_link_1_text', 'hofm_link_1_url',
-        'hofm_link_2_text', 'hofm_link_2_url',
-        'hofm_link_3_text', 'hofm_link_3_url',
-        'hofm_link_4_text', 'hofm_link_4_url',
-        'hofm_link_5_text', 'hofm_link_5_url',
+        'hofm_link_1_text', 'hofm_link_1_url', 'hofm_link_1_hide_mobile',
+        'hofm_link_2_text', 'hofm_link_2_url', 'hofm_link_2_hide_mobile',
+        'hofm_link_3_text', 'hofm_link_3_url', 'hofm_link_3_hide_mobile',
+        'hofm_link_4_text', 'hofm_link_4_url', 'hofm_link_4_hide_mobile',
+        'hofm_link_5_text', 'hofm_link_5_url', 'hofm_link_5_hide_mobile',
         'hofm_cta_text', 'hofm_cta_url',
         'hofm_bg_color', 'hofm_link_color', 'hofm_divider_color',
         'hofm_cta_bg_color', 'hofm_cta_bg_color_2', 'hofm_cta_text_color'
@@ -140,11 +141,12 @@ function hofm_admin_page_layout() {
 
             <!-- Bloco dos Links Centrais -->
             <h3>2. Links Centrais (Máx. 5)</h3>
-            <p>Gerencie os links exibidos no centro do menu.</p>
+            <p>Gerencie os links exibidos no centro do menu. No celular, o menu vira uma grade com a logo, o CTA e até 2 links — use "Ocultar no celular" para escolher quais 2 aparecem lá.</p>
             <table class="form-table" id="hofm-links-table">
                 <?php for($i = 1; $i <= 5; $i++):
                     $text = hofm_opt('hofm_link_'.$i.'_text');
                     $url = get_option('hofm_link_'.$i.'_url');
+                    $hide_mobile = hofm_opt('hofm_link_'.$i.'_hide_mobile');
                     // Exibe a primeira linha ou qualquer linha que já tenha conteúdo salvo
                     $is_hidden = ($i > 3 && empty($text) && empty($url)) ? 'display: none;' : '';
                 ?>
@@ -154,6 +156,11 @@ function hofm_admin_page_layout() {
                         <input type="text" name="hofm_link_<?php echo $i; ?>_text" value="<?php echo esc_attr($text); ?>" placeholder="Texto (ex: Médicos)" style="width: 35%; margin-right: 2%;" />
                         <input type="url" name="hofm_link_<?php echo $i; ?>_url" value="<?php echo esc_attr($url); ?>" placeholder="URL do Link" style="width: 45%; margin-right: 2%;" />
                         <button type="button" class="button button-link-delete hofm-remove-btn" data-row="<?php echo $i; ?>" style="color: #d63638;">Excluir</button>
+                        <br>
+                        <label style="display:inline-block; margin-top: 6px; font-size: 12px; color: #555;">
+                            <input type="checkbox" name="hofm_link_<?php echo $i; ?>_hide_mobile" value="1" <?php checked($hide_mobile, '1'); ?> />
+                            Ocultar no celular
+                        </label>
                     </td>
                 </tr>
                 <?php endfor; ?>
@@ -261,13 +268,19 @@ function hofm_render_frontend_menu() {
         $logo_html = '<a href="' . esc_url($logo_url) . '" class="hofm-logo"><img src="' . esc_url($logo_img) . '" alt="Logo"></a>';
     }
     $items = [];
+    $mobile_links = [];
     for ($i = 1; $i <= 5; $i++) {
         $l_text = hofm_opt('hofm_link_'.$i.'_text');
         $l_url  = get_option('hofm_link_'.$i.'_url');
         if (!empty($l_text)) {
             $items[] = '<a href="' . esc_url($l_url) . '" class="hofm-link">' . esc_html($l_text) . '</a>';
+            if (hofm_opt('hofm_link_'.$i.'_hide_mobile') !== '1') {
+                $mobile_links[] = '<a href="' . esc_url($l_url) . '" class="hofm-m-link">' . esc_html($l_text) . '</a>';
+            }
         }
     }
+    // A grade do celular tem só 2 colunas de links (além da logo e do CTA)
+    $mobile_links = array_slice($mobile_links, 0, 2);
     ?>
     <style>
         .hofm-floating-wrapper {
@@ -382,51 +395,83 @@ function hofm_render_frontend_menu() {
             filter: brightness(1.05);
         }
 
+        /* Grade 2x2 exibida só no celular (logo + até 2 links + CTA) */
+        .hofm-mobile-menu {
+            display: none;
+        }
+
         /* Responsividade para Celulares */
         @media (max-width: 768px) {
             .hofm-floating-wrapper {
-                bottom: 12px;
-                padding: 0 12px; /* Evita colar nas bordas da tela */
-                box-sizing: border-box;
+                bottom: 16px;
             }
+            /* Esconde a versão "pílula" de desktop e mostra a grade */
             .hofm-floating-menu {
-                justify-content: flex-start;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch; /* Rolagem suave em iOS */
-                scrollbar-width: none; /* Firefox */
-                scroll-snap-type: x proximity;
-                padding: 6px 8px 6px 12px;
-                border-radius: 18px;
+                display: none;
+            }
+            .hofm-mobile-menu {
+                pointer-events: auto;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-auto-rows: 1fr;
+                width: 78vw;
+                max-width: 300px;
+                background-color: <?php echo esc_attr($bg_color); ?>;
+                border-radius: 20px;
+                overflow: hidden; /* Recorta o canto do CTA para acompanhar o raio do container */
+                box-shadow: 0 20px 45px -12px rgba(15, 60, 100, 0.25), 0 2px 8px rgba(15, 60, 100, 0.06);
+                border: 1px solid rgba(15, 60, 100, 0.06);
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            }
+            .hofm-mobile-menu .hofm-m-cell {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 60px;
+                padding: 10px;
+            }
+            .hofm-mobile-menu .hofm-m-logo {
+                border-right: 1px solid <?php echo esc_attr($divider_color); ?>;
+                border-bottom: 1px solid <?php echo esc_attr($divider_color); ?>;
+            }
+            .hofm-mobile-menu .hofm-m-logo img {
+                height: 30px;
+                width: auto;
+                max-width: 100%;
+                object-fit: contain;
+            }
+            .hofm-mobile-menu .hofm-m-link-a {
+                border-bottom: 1px solid <?php echo esc_attr($divider_color); ?>;
+            }
+            .hofm-mobile-menu .hofm-m-link-b {
+                border-right: 1px solid <?php echo esc_attr($divider_color); ?>;
+            }
+            .hofm-mobile-menu a.hofm-m-link {
+                color: <?php echo esc_attr($link_color); ?> !important;
+                font-size: 15px;
+                font-weight: 700;
+                text-decoration: none !important;
+                text-align: center;
+            }
+            .hofm-mobile-menu .hofm-m-cta-cell {
+                padding: 0;
+            }
+            .hofm-mobile-menu a.hofm-m-cta {
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 width: 100%;
-                /* Esmaece as pontas para indicar que há mais itens ao rolar */
-                -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
-                mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
+                height: 100%;
+                background: linear-gradient(135deg, <?php echo esc_attr($cta_bg_color); ?>, <?php echo esc_attr($cta_bg_color_2); ?>);
+                color: <?php echo esc_attr($cta_text_color); ?> !important;
+                font-size: 15px;
+                font-weight: 700;
+                text-decoration: none !important;
             }
-            .hofm-floating-menu::-webkit-scrollbar {
-                display: none; /* Esconde a barra de rolagem visual no Chrome/Safari */
-            }
-            .hofm-logo,
-            .hofm-floating-menu a.hofm-link,
-            .hofm-floating-menu a.hofm-cta {
-                scroll-snap-align: start;
-            }
-            .hofm-logo {
-                height: 38px;
-                padding-right: 12px;
-            }
-            .hofm-divider {
-                margin: 0 12px;
-                height: 24px;
-            }
-            .hofm-floating-menu a.hofm-cta {
-                padding: 13px 18px;
-                font-size: 14px;
-                margin-left: 12px;
-                border-radius: 12px;
-            }
-            .hofm-floating-menu a.hofm-link {
-                font-size: 14px;
-                padding: 13px 6px;
+            .hofm-mobile-menu a.hofm-m-cta:hover,
+            .hofm-mobile-menu a.hofm-m-cta:focus-visible {
+                color: <?php echo esc_attr($cta_text_color); ?> !important;
+                filter: brightness(1.05);
             }
         }
     </style>
@@ -442,6 +487,27 @@ function hofm_render_frontend_menu() {
             <?php endif; ?>
 
         </div>
+
+        <!-- Grade 2x2 exibida só no celular: logo + até 2 links + CTA -->
+        <div class="hofm-mobile-menu">
+            <div class="hofm-m-cell hofm-m-logo">
+                <?php if ($logo_img): ?>
+                <a href="<?php echo esc_url($logo_url); ?>"><img src="<?php echo esc_url($logo_img); ?>" alt="Logo"></a>
+                <?php endif; ?>
+            </div>
+            <div class="hofm-m-cell hofm-m-link-a">
+                <?php echo isset($mobile_links[0]) ? $mobile_links[0] : ''; ?>
+            </div>
+            <div class="hofm-m-cell hofm-m-link-b">
+                <?php echo isset($mobile_links[1]) ? $mobile_links[1] : ''; ?>
+            </div>
+            <div class="hofm-m-cell hofm-m-cta-cell">
+                <?php if ($cta_text): ?>
+                <a href="<?php echo esc_url($cta_url); ?>" class="hofm-m-cta"><?php echo esc_html($cta_text); ?></a>
+                <?php endif; ?>
+            </div>
+        </div>
+
     </div>
 
     <script>
