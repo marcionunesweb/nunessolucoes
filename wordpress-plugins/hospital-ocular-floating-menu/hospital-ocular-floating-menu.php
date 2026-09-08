@@ -394,7 +394,7 @@ function hofm_render_frontend_menu() {
             filter: brightness(1.05);
         }
 
-        /* Grade exibida só no celular (logo + até 3 links + CTA em barra inteira embaixo) */
+        /* Grade exibida só no celular (logo + até 3 links + CTA numa 3ª coluna, ocupando as duas linhas) */
         .hofm-mobile-menu {
             display: none;
         }
@@ -411,10 +411,10 @@ function hofm_render_frontend_menu() {
             .hofm-mobile-menu {
                 pointer-events: auto;
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr 1fr 0.85fr;
                 grid-auto-rows: 1fr;
-                width: 78vw;
-                max-width: 300px;
+                width: 88vw;
+                max-width: 340px;
                 background-color: <?php echo esc_attr($bg_color); ?>;
                 border-radius: 20px;
                 overflow: hidden; /* Recorta o canto do CTA para acompanhar o raio do container */
@@ -445,9 +445,6 @@ function hofm_render_frontend_menu() {
             .hofm-mobile-menu .hofm-m-link-b {
                 border-right: 1px solid <?php echo esc_attr($divider_color); ?>;
             }
-            .hofm-mobile-menu .hofm-m-cta-cell {
-                grid-column: 1 / -1;
-            }
             .hofm-mobile-menu a.hofm-m-link {
                 color: <?php echo esc_attr($link_color); ?> !important;
                 font-size: 15px;
@@ -456,6 +453,8 @@ function hofm_render_frontend_menu() {
                 text-align: center;
             }
             .hofm-mobile-menu .hofm-m-cta-cell {
+                grid-column: 3;
+                grid-row: 1 / span 2;
                 padding: 0;
             }
             .hofm-mobile-menu a.hofm-m-cta {
@@ -464,11 +463,13 @@ function hofm_render_frontend_menu() {
                 justify-content: center;
                 width: 100%;
                 height: 100%;
+                text-align: center;
                 background: linear-gradient(135deg, <?php echo esc_attr($cta_bg_color); ?>, <?php echo esc_attr($cta_bg_color_2); ?>);
                 color: <?php echo esc_attr($cta_text_color); ?> !important;
-                font-size: 15px;
+                font-size: 14px;
                 font-weight: 700;
                 text-decoration: none !important;
+                padding: 8px;
             }
             .hofm-mobile-menu a.hofm-m-cta:hover,
             .hofm-mobile-menu a.hofm-m-cta:focus-visible {
@@ -490,7 +491,7 @@ function hofm_render_frontend_menu() {
 
         </div>
 
-        <!-- Grade exibida só no celular: logo + até 3 links + CTA em barra inteira embaixo -->
+        <!-- Grade exibida só no celular: logo + até 3 links (2 colunas, 2 linhas) + CTA na 3ª coluna -->
         <div class="hofm-mobile-menu">
             <div class="hofm-m-cell hofm-m-logo">
                 <?php if ($logo_img): ?>
