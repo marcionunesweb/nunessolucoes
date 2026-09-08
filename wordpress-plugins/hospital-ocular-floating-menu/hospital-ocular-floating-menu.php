@@ -24,7 +24,6 @@ function hofm_default_value($key) {
         'hofm_cta_bg_color'     => '#18b6c9',
         'hofm_cta_bg_color_2'   => '#154a90',
         'hofm_cta_text_color'   => '#ffffff',
-        'hofm_link_1_hide_mobile' => '1',
     ];
     return isset($defaults[$key]) ? $defaults[$key] : '';
 }
@@ -141,7 +140,7 @@ function hofm_admin_page_layout() {
 
             <!-- Bloco dos Links Centrais -->
             <h3>2. Links Centrais (Máx. 5)</h3>
-            <p>Gerencie os links exibidos no centro do menu. No celular, o menu vira uma grade com a logo, o CTA e até 2 links — use "Ocultar no celular" para escolher quais 2 aparecem lá.</p>
+            <p>Gerencie os links exibidos no centro do menu. No celular, o menu vira uma grade com a logo, o CTA e até 3 links — use "Ocultar no celular" se tiver mais de 3 e quiser escolher quais aparecem lá.</p>
             <table class="form-table" id="hofm-links-table">
                 <?php for($i = 1; $i <= 5; $i++):
                     $text = hofm_opt('hofm_link_'.$i.'_text');
@@ -279,8 +278,8 @@ function hofm_render_frontend_menu() {
             }
         }
     }
-    // A grade do celular tem só 2 colunas de links (além da logo e do CTA)
-    $mobile_links = array_slice($mobile_links, 0, 2);
+    // A grade do celular comporta até 3 links (além da logo e do CTA)
+    $mobile_links = array_slice($mobile_links, 0, 3);
     ?>
     <style>
         .hofm-floating-wrapper {
@@ -395,7 +394,7 @@ function hofm_render_frontend_menu() {
             filter: brightness(1.05);
         }
 
-        /* Grade 2x2 exibida só no celular (logo + até 2 links + CTA) */
+        /* Grade exibida só no celular (logo + até 3 links + CTA em barra inteira embaixo) */
         .hofm-mobile-menu {
             display: none;
         }
@@ -446,6 +445,9 @@ function hofm_render_frontend_menu() {
             .hofm-mobile-menu .hofm-m-link-b {
                 border-right: 1px solid <?php echo esc_attr($divider_color); ?>;
             }
+            .hofm-mobile-menu .hofm-m-cta-cell {
+                grid-column: 1 / -1;
+            }
             .hofm-mobile-menu a.hofm-m-link {
                 color: <?php echo esc_attr($link_color); ?> !important;
                 font-size: 15px;
@@ -488,7 +490,7 @@ function hofm_render_frontend_menu() {
 
         </div>
 
-        <!-- Grade 2x2 exibida só no celular: logo + até 2 links + CTA -->
+        <!-- Grade exibida só no celular: logo + até 3 links + CTA em barra inteira embaixo -->
         <div class="hofm-mobile-menu">
             <div class="hofm-m-cell hofm-m-logo">
                 <?php if ($logo_img): ?>
@@ -500,6 +502,9 @@ function hofm_render_frontend_menu() {
             </div>
             <div class="hofm-m-cell hofm-m-link-b">
                 <?php echo isset($mobile_links[1]) ? $mobile_links[1] : ''; ?>
+            </div>
+            <div class="hofm-m-cell hofm-m-link-c">
+                <?php echo isset($mobile_links[2]) ? $mobile_links[2] : ''; ?>
             </div>
             <div class="hofm-m-cell hofm-m-cta-cell">
                 <?php if ($cta_text): ?>
