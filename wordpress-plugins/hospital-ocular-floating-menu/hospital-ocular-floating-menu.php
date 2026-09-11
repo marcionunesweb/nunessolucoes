@@ -304,6 +304,7 @@ function hofm_render_frontend_menu() {
         }
 
         .hofm-floating-menu {
+            position: relative; /* Ancora o botão de fechar no canto */
             pointer-events: auto; /* Reativa cliques dentro do menu */
             background-color: <?php echo esc_attr($bg_color); ?>;
             padding: 8px 10px 8px 18px;
@@ -317,6 +318,38 @@ function hofm_render_frontend_menu() {
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             max-width: 95vw; /* Impede que o menu vaze a tela em tamanhos intermediários */
+        }
+
+        /* Botão "x" para fechar o menu (desktop e mobile) */
+        .hofm-close-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid rgba(15, 60, 100, 0.12);
+            box-shadow: 0 4px 10px rgba(15, 60, 100, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            font-size: 15px;
+            line-height: 1;
+            font-family: inherit;
+            color: #5b7186;
+            cursor: pointer;
+            z-index: 2;
+            appearance: none;
+            -webkit-appearance: none;
+            transition: all 0.2s ease;
+        }
+        .hofm-close-btn:hover,
+        .hofm-close-btn:focus-visible {
+            background: #f3f6f8;
+            color: <?php echo esc_attr($link_color); ?>;
         }
 
         /* 1. Item Logo */
@@ -410,6 +443,10 @@ function hofm_render_frontend_menu() {
             }
             .hofm-mobile-menu {
                 pointer-events: auto;
+                position: relative; /* Ancora o botão de fechar fora da área recortada da grade */
+                display: inline-block;
+            }
+            .hofm-mobile-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr 0.85fr;
                 grid-auto-rows: 1fr;
@@ -422,42 +459,42 @@ function hofm_render_frontend_menu() {
                 border: 1px solid rgba(15, 60, 100, 0.06);
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             }
-            .hofm-mobile-menu .hofm-m-cell {
+            .hofm-mobile-grid .hofm-m-cell {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 min-height: 60px;
                 padding: 10px;
             }
-            .hofm-mobile-menu .hofm-m-logo {
+            .hofm-mobile-grid .hofm-m-logo {
                 border-right: 1px solid <?php echo esc_attr($divider_color); ?>;
                 border-bottom: 1px solid <?php echo esc_attr($divider_color); ?>;
             }
-            .hofm-mobile-menu .hofm-m-logo img {
+            .hofm-mobile-grid .hofm-m-logo img {
                 height: 30px;
                 width: auto;
                 max-width: 100%;
                 object-fit: contain;
             }
-            .hofm-mobile-menu .hofm-m-link-a {
+            .hofm-mobile-grid .hofm-m-link-a {
                 border-bottom: 1px solid <?php echo esc_attr($divider_color); ?>;
             }
-            .hofm-mobile-menu .hofm-m-link-b {
+            .hofm-mobile-grid .hofm-m-link-b {
                 border-right: 1px solid <?php echo esc_attr($divider_color); ?>;
             }
-            .hofm-mobile-menu a.hofm-m-link {
+            .hofm-mobile-grid a.hofm-m-link {
                 color: <?php echo esc_attr($link_color); ?> !important;
                 font-size: 15px;
                 font-weight: 700;
                 text-decoration: none !important;
                 text-align: center;
             }
-            .hofm-mobile-menu .hofm-m-cta-cell {
+            .hofm-mobile-grid .hofm-m-cta-cell {
                 grid-column: 3;
                 grid-row: 1 / span 2;
                 padding: 0;
             }
-            .hofm-mobile-menu a.hofm-m-cta {
+            .hofm-mobile-grid a.hofm-m-cta {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -471,8 +508,8 @@ function hofm_render_frontend_menu() {
                 text-decoration: none !important;
                 padding: 8px;
             }
-            .hofm-mobile-menu a.hofm-m-cta:hover,
-            .hofm-mobile-menu a.hofm-m-cta:focus-visible {
+            .hofm-mobile-grid a.hofm-m-cta:hover,
+            .hofm-mobile-grid a.hofm-m-cta:focus-visible {
                 color: <?php echo esc_attr($cta_text_color); ?> !important;
                 filter: brightness(1.05);
             }
@@ -489,29 +526,34 @@ function hofm_render_frontend_menu() {
                 <a href="<?php echo esc_url($cta_url); ?>" class="hofm-cta"><?php echo esc_html($cta_text); ?></a>
             <?php endif; ?>
 
+            <button type="button" class="hofm-close-btn" aria-label="Fechar menu">&times;</button>
+
         </div>
 
         <!-- Grade exibida só no celular: logo + até 3 links (2 colunas, 2 linhas) + CTA na 3ª coluna -->
         <div class="hofm-mobile-menu">
-            <div class="hofm-m-cell hofm-m-logo">
-                <?php if ($logo_img): ?>
-                <a href="<?php echo esc_url($logo_url); ?>"><img src="<?php echo esc_url($logo_img); ?>" alt="Logo"></a>
-                <?php endif; ?>
+            <div class="hofm-mobile-grid">
+                <div class="hofm-m-cell hofm-m-logo">
+                    <?php if ($logo_img): ?>
+                    <a href="<?php echo esc_url($logo_url); ?>"><img src="<?php echo esc_url($logo_img); ?>" alt="Logo"></a>
+                    <?php endif; ?>
+                </div>
+                <div class="hofm-m-cell hofm-m-link-a">
+                    <?php echo isset($mobile_links[0]) ? $mobile_links[0] : ''; ?>
+                </div>
+                <div class="hofm-m-cell hofm-m-link-b">
+                    <?php echo isset($mobile_links[1]) ? $mobile_links[1] : ''; ?>
+                </div>
+                <div class="hofm-m-cell hofm-m-link-c">
+                    <?php echo isset($mobile_links[2]) ? $mobile_links[2] : ''; ?>
+                </div>
+                <div class="hofm-m-cell hofm-m-cta-cell">
+                    <?php if ($cta_text): ?>
+                    <a href="<?php echo esc_url($cta_url); ?>" class="hofm-m-cta"><?php echo esc_html($cta_text); ?></a>
+                    <?php endif; ?>
+                </div>
             </div>
-            <div class="hofm-m-cell hofm-m-link-a">
-                <?php echo isset($mobile_links[0]) ? $mobile_links[0] : ''; ?>
-            </div>
-            <div class="hofm-m-cell hofm-m-link-b">
-                <?php echo isset($mobile_links[1]) ? $mobile_links[1] : ''; ?>
-            </div>
-            <div class="hofm-m-cell hofm-m-link-c">
-                <?php echo isset($mobile_links[2]) ? $mobile_links[2] : ''; ?>
-            </div>
-            <div class="hofm-m-cell hofm-m-cta-cell">
-                <?php if ($cta_text): ?>
-                <a href="<?php echo esc_url($cta_url); ?>" class="hofm-m-cta"><?php echo esc_html($cta_text); ?></a>
-                <?php endif; ?>
-            </div>
+            <button type="button" class="hofm-close-btn" aria-label="Fechar menu">&times;</button>
         </div>
 
     </div>
@@ -522,7 +564,17 @@ function hofm_render_frontend_menu() {
             var menuWrapper = document.querySelector('.hofm-floating-wrapper');
             if (!menuWrapper) return;
 
+            // Se o visitante já fechou o menu nesta visita, mantém escondido
+            var dismissed = false;
+            try {
+                dismissed = sessionStorage.getItem('hofm_menu_closed') === '1';
+            } catch (e) {}
+
             function toggleMenuVisibility() {
+                if (dismissed) {
+                    menuWrapper.classList.remove('is-visible');
+                    return;
+                }
                 // Se a rolagem for maior que 150px para baixo, exibe o menu
                 if (window.scrollY > 150) {
                     menuWrapper.classList.add('is-visible');
@@ -530,6 +582,18 @@ function hofm_render_frontend_menu() {
                     menuWrapper.classList.remove('is-visible');
                 }
             }
+
+            // Botão "x": fecha o menu e não mostra de novo até o fim da visita
+            document.querySelectorAll('.hofm-close-btn').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    dismissed = true;
+                    menuWrapper.classList.remove('is-visible');
+                    try {
+                        sessionStorage.setItem('hofm_menu_closed', '1');
+                    } catch (e) {}
+                });
+            });
 
             // Ouve o evento de rolagem (scroll)
             window.addEventListener('scroll', toggleMenuVisibility);
