@@ -284,7 +284,7 @@ function hofm_render_frontend_menu() {
     <style>
         .hofm-floating-wrapper {
             position: fixed;
-            bottom: 30px;
+            bottom: 100px; /* Distância da base para não sobrepor o botão do WhatsApp */
             left: 0;
             width: 100%;
             display: flex;
@@ -435,7 +435,7 @@ function hofm_render_frontend_menu() {
         /* Responsividade para Celulares */
         @media (max-width: 768px) {
             .hofm-floating-wrapper {
-                bottom: 16px;
+                bottom: 100px; /* Mesma folga do desktop, para não colidir com o botão do WhatsApp */
             }
             /* Esconde a versão "pílula" de desktop e mostra a grade */
             .hofm-floating-menu {
